@@ -26,13 +26,11 @@ public class MyKeyboard implements KeyListener {
 
     @Override
     public void keyPressed(int key, char c) {
-        System.out.println(key);
-        keyboard[key] = true;
+        keyboard[key] = !keyboard[key];
     }
 
     @Override
     public void keyReleased(int key, char c) {
-        keyboard[key] = true;
     }
 
     @Override

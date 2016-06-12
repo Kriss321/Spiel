@@ -5,6 +5,8 @@
  */
 package gui;
 
+import main.Resources;
+import main.Engine;
 import gui.states.Game;
 import gui.states.Menu;
 import input.MyKeyboard;
@@ -29,12 +31,14 @@ public class Window extends StateBasedGame{
 
     @Override
     public void initStatesList(GameContainer container) throws SlickException {
+        long time = System.currentTimeMillis();
         new Engine(container);
+        new Resources();
         new MyKeyboard(container);
         new MyMouse(container);
-        
         this.addState(new Menu());
         this.addState(new Game());
+        System.out.println("Game: " + (System.currentTimeMillis() - time) + " ms");
     }
     
 }

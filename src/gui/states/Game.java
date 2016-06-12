@@ -5,9 +5,16 @@
  */
 package gui.states;
 
+import main.Resources;
+import input.MyKeyboard;
+import java.io.FileNotFoundException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import map.MapManager;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
+import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
@@ -17,6 +24,10 @@ import org.newdawn.slick.state.StateBasedGame;
  * @author Kristof
  */
 public class Game extends BasicGameState {
+    
+    private static MapManager mapManager;
+    
+    private Image background;
 
     @Override
     public int getID() {
@@ -25,17 +36,32 @@ public class Game extends BasicGameState {
 
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
-        Image background = new Image("res/Background.jpg");
+        long time = System.currentTimeMillis();
+        try {
+            background = Resources.getImage("Game");
+        } catch (FileNotFoundException ex) {
+            System.err.println(ex);
+        }
+        
+        mapManager = new MapManager();
+        System.out.println("InitGame: " + (System.currentTimeMillis() - time) + " ms");
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        g.drawImage(background, 0, 0);
+        mapManager.renderMap(0, 0, 0);
+        if (MyKeyboard.keyboard[Input.KEY_F3]) {
+            g.drawString("FPS: " + container.getFPS(), 10, 10);
+        }
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+    }
+    
+    public static void loadMap(String name){
+        mapManager.loadMap(name);
     }
     
 }
