@@ -23,9 +23,9 @@ public class EntityManager {
         
     }
     
-    public void loadEntitys() {
-        entitys = new Entity[2];
-        for (int i = 0; i < 2; i++) {
+    public static void loadEntitys(int playerCount) {
+        entitys = new Entity[playerCount];
+        for (int i = 0; i < entitys.length; i++) {
             entitys[i] = new Player(MapManager.map, i);
         }
     }
