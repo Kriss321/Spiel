@@ -55,15 +55,11 @@ public class Menu extends BasicGameState {
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
-        try {
-            background = Resources.getImage("Main");
-            btnStart = Resources.getImage("btnStart");
-            leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
-            topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
-        } catch (FileNotFoundException ex) {
-            System.err.println(ex);
-        }
-        
+        background = Resources.getImage("Main");
+        btnStart = Resources.getImage("btnStart");
+        leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
+        topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
+
         fontMapHeadline = Resources.getFont("Comic Sans MS", "32 - bold italic");
         fontMaps = Resources.getFont("Comic Sans MS", "28 - bold");
         Set<String> temp;
@@ -80,81 +76,24 @@ public class Menu extends BasicGameState {
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
         g.drawImage(btnStart, leftSideButton, topSideButton);
-        if (MyKeyboard.keyboard[Input.KEY_F3]) {
-            g.drawString("FPS: " + container.getFPS(), 10, 10);
-            g.drawString("Mouse x: " + String.valueOf(mouseX) + ", y: " + String.valueOf(mouseY), 10, 25);
-            g.drawString("Map: " + String.valueOf(selectedMap), 10, 40);
-        }
-        
-        posX = 160;
-        posY = container.getHeight()/2 - (45+maps.length*28)/2;
-        g.setColor(Color.lightGray);
-        g.fillRoundRect(posX, posY, 200, 45+maps.length*28, 3);
-        fontMapHeadline.drawString(posX+50, posY+5, "Maps:", Color.orange);
-        int y = posY+35;
-        for (int i = 0; i < maps.length; i++) {
-            String temp = maps[i].toString();
-            fontMaps.drawString(posX+10, y, temp, mapSelect[i]);
-            y += 28;
-        }
-        
-        
-        
+
+        debug(container, g);
+        renderMapList(container, g);
+
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         mouseX = Mouse.getX();
         mouseY = Math.abs(Mouse.getY()-container.getHeight());
-        
-        try {
-            if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
-                if (MyMouse.mouse[Input.MOUSE_LEFT_BUTTON]) {
-                    btnStart = Resources.getImage("btnStartClick");
-                } else {
-                    btnStart = Resources.getImage("btnStartHover");
-                }
-            } else if ((mouseX >= posX) && (mouseX <= (posX + 200)) && (mouseY >= posY) && (mouseY <= (posY + 45 + maps.length * 28))) {
- 
-                for (int i = 0; i < maps.length; i++) {
-                    if (mouseY >= posY + 38 + (i * 28) && mouseY <= posY + 38 + 28 + (i * 28)) {
-                        if (selectedMap == i) {
-                            mapSelect[i] = Color.cyan;
-                        } else {
-                            mapSelect[i] = Color.blue;
-                        }
-                    }
-                }
-                for (int i = 0; i < maps.length; i++) {
-                    if (mouseY <= posY + 38 + (i * 28) || mouseY >= posY + 38 + 28 + (i * 28)) {
-                        if (selectedMap == i) {
-                            mapSelect[i] = Color.green;
-                        } else {
-                            mapSelect[i] = Color.white;
-                        }
-                    }
-                }
-
-            } else {
-                btnStart = Resources.getImage("btnStart");
-                for (int i = 0; i < maps.length; i++) {
-                    if (selectedMap == i) {
-                        mapSelect[i] = Color.green;
-                    } else {
-                        mapSelect[i] = Color.white;
-                    }
-                }
-            }
-        } catch (FileNotFoundException ex) {
-            System.err.println(ex);
-        }
-        
+        mouseEvent();
     }
     
     public static void mousClicked(){
         if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
             if (selectedMap != -1) {
                 Game.loadMap(selectedMap());
+                Game.loadEntity();
                 Window.game.enterState(1);
                 Window.state = 1;
             }
@@ -182,4 +121,65 @@ public class Menu extends BasicGameState {
         return (String) maps[selectedMap];
     }
     
+    private void mouseEvent(){
+        if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
+            if (MyMouse.mouse[Input.MOUSE_LEFT_BUTTON]) {
+                btnStart = Resources.getImage("btnStartClick");
+            } else {
+                btnStart = Resources.getImage("btnStartHover");
+            }
+        } else if ((mouseX >= posX) && (mouseX <= (posX + 200)) && (mouseY >= posY) && (mouseY <= (posY + 45 + maps.length * 28))) {
+
+            for (int i = 0; i < maps.length; i++) {
+                if (mouseY >= posY + 38 + (i * 28) && mouseY <= posY + 38 + 28 + (i * 28)) {
+                    if (selectedMap == i) {
+                        mapSelect[i] = Color.cyan;
+                    } else {
+                        mapSelect[i] = Color.blue;
+                    }
+                }
+            }
+            for (int i = 0; i < maps.length; i++) {
+                if (mouseY <= posY + 38 + (i * 28) || mouseY >= posY + 38 + 28 + (i * 28)) {
+                    if (selectedMap == i) {
+                        mapSelect[i] = Color.green;
+                    } else {
+                        mapSelect[i] = Color.white;
+                    }
+                }
+            }
+
+        } else {
+            btnStart = Resources.getImage("btnStart");
+            for (int i = 0; i < maps.length; i++) {
+                if (selectedMap == i) {
+                    mapSelect[i] = Color.green;
+                } else {
+                    mapSelect[i] = Color.white;
+                }
+            }
+        }
+    }
+    
+    private void debug(GameContainer container, Graphics g){
+        if (MyKeyboard.keyboard[Input.KEY_F3]) {
+            g.drawString("FPS: " + container.getFPS(), 10, 10);
+            g.drawString("Mouse x: " + String.valueOf(mouseX) + ", y: " + String.valueOf(mouseY), 10, 25);
+            g.drawString("Map: " + String.valueOf(selectedMap), 10, 40);
+        }
+    }
+    
+    private void renderMapList(GameContainer container, Graphics g){
+        posX = 160;
+        posY = container.getHeight()/2 - (45+maps.length*28)/2;
+        g.setColor(Color.lightGray);
+        g.fillRoundRect(posX, posY, 200, 45+maps.length*28, 3);
+        fontMapHeadline.drawString(posX+50, posY+5, "Maps:", Color.orange);
+        int y = posY+35;
+        for (int i = 0; i < maps.length; i++) {
+            String temp = maps[i].toString();
+            fontMaps.drawString(posX+10, y, temp, mapSelect[i]);
+            y += 28;
+        }
+    }
 }

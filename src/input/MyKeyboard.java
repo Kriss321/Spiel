@@ -26,11 +26,18 @@ public class MyKeyboard implements KeyListener {
 
     @Override
     public void keyPressed(int key, char c) {
-        keyboard[key] = !keyboard[key];
+        if (key == Input.KEY_F3) {
+            keyboard[key] = !keyboard[key];
+        } else {
+            keyboard[key] = true;
+        }
     }
 
     @Override
     public void keyReleased(int key, char c) {
+        if (key != Input.KEY_F3) {
+            keyboard[key] = false;
+        }
     }
 
     @Override

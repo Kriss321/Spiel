@@ -13,7 +13,7 @@ import org.newdawn.slick.SlickException;
  */
 public class MapManager {
     
-    private Map map;
+    public static Map map;
     
     public void loadMap(String name) {
         try {
@@ -37,4 +37,5 @@ public class MapManager {
     public void renderMap(int x, int y, int layer){
         map.renderMap(x, y, layer);
     }
+    
 }

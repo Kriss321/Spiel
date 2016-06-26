@@ -11,6 +11,7 @@ import gui.states.Game;
 import gui.states.Menu;
 import input.MyKeyboard;
 import input.MyMouse;
+import main.Config;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
@@ -32,6 +33,7 @@ public class Window extends StateBasedGame{
     @Override
     public void initStatesList(GameContainer container) throws SlickException {
         long time = System.currentTimeMillis();
+        new Config();
         new Engine(container);
         new Resources();
         new MyKeyboard(container);

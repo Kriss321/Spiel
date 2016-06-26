@@ -5,14 +5,40 @@
  */
 package entity;
 
+import org.newdawn.slick.Graphics;
+
 /**
  *
  * @author Kristof
  */
-public class Entity {
+public interface Entity {
     
-    private int posX;
-    private int posY;
-    private int valX;
-    private int valY;
+    public void drawEntity(Graphics g);
+    
+    public void move(int delta);
+    
+    public void moveRight(int delta);
+    
+    public void moveLeft(int delta);
+    
+    public void Jump(int delta);
+    
+    public void gravity(int delta);
+    
+    public void slowDown(int delta);
+    
+    public boolean collisionWorld(float x, float y);
+    
+    public boolean collisionEntity(float x, float y);
+    
+    public void delta(int delta);
+    
+    public float getPosX();
+    
+    public float getPosY();
+    
+    public int getWidth();
+    
+    public int getHeigth();
+    
 }

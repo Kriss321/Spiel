@@ -5,18 +5,8 @@
  */
 package map;
 
-import java.io.BufferedReader;
 import main.Resources;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
-import java.util.stream.Collectors;
+import java.util.HashMap;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.tiled.TiledMap;
 
@@ -28,47 +18,51 @@ public class Map {
     
     private String mapName;
     private TiledMap map;
-    private double gravity;
+    private float gravity;
+    private java.util.Map<Integer, float[]> startPoints;
     
     public Map(String name) throws SlickException {
         mapName = name;
         map = Resources.loadMap(name);
         setGravity();
+        findStartPoints();
     }
     
-    public void renderMap(int x, int y){
+    public void findStartPoints(){
+        startPoints = new HashMap();
+        int player = 0;
+        for (int x = 0; x < map.getWidth(); x++) {
+            for (int y = 0; y < map.getHeight(); y++) {
+                if(map.getTileId(x, y, 1) == 91){
+                    float[] point = {x, y};
+                    startPoints.put(player, point);
+                    player++;
+                }
+            }
+        }
+    }
+    
+    public void renderMap(int x, int y) {
         map.render(x, y);
     }
     
-    public void renderMap(int x, int y, int layer){
+    public void renderMap(int x, int y, int layer) {
         map.render(x, y, layer);
     }
     
-    public String getName(){
+    public String getName() {
         return mapName;
     }
     
-    public void setGravity(){
-        try {
-            InputStream temp = new FileInputStream(Resources.getMapPath(mapName));
-            BufferedReader buffer = new BufferedReader(new InputStreamReader(temp));
-            String map = buffer.lines().collect(Collectors.joining("\n"));
-            
-            Pattern properties = Pattern.compile("<[\\w =]+\"Gravity\"[\\w\\d.=\" ]+\\/>");
-            Matcher matcher = properties.matcher(map);
-            if (matcher.find()) {
-                properties = Pattern.compile("[\\d.]+");
-                matcher = properties.matcher(matcher.group());
-                if (matcher.find()) {
-                    gravity = Double.parseDouble(matcher.group());
-                }
-            } else {
-                gravity = 9.81;
-            }
-            
-            
-        } catch (FileNotFoundException ex) {
-            Logger.getLogger(Map.class.getName()).log(Level.SEVERE, null, ex);
-        }
+    public TiledMap getMap() {
+        return map;
+    }
+    
+    public float[] getStartPoit(int id) {
+        return startPoints.get(id);
+    }
+    
+    public float setGravity(){
+        return gravity = Float.parseFloat(map.getMapProperty("Gravity", "9.81"));
     }
 }

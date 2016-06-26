@@ -6,7 +6,6 @@
 package main;
 
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
@@ -62,6 +61,18 @@ public class Resources{
             }
         }
         
+        dir = new File("./res/Entitys");
+        for (File file : dir.listFiles()) {
+            if (!file.isHidden()) {
+                try {
+                    String name = file.getName().substring(0, file.getName().lastIndexOf("."));
+                    images.put(name, loadImage(file.getAbsolutePath()));
+                } catch (SlickException ex) {
+                    System.err.println(ex);
+                }
+            }
+        }
+        
         dir = new File("./res/Font");
         for (File file : dir.listFiles()) {
             if (!file.isHidden() && file.isDirectory()) {
@@ -98,7 +109,7 @@ public class Resources{
         return new AngelCodeFont(name+".fnt", new Image(name+".png"));
     }
     
-    public static Image getImage(String image) throws FileNotFoundException {
+    public static Image getImage(String image) {
         boolean found = false;
         for (String key : images.keySet()) {
             
@@ -108,9 +119,6 @@ public class Resources{
             }
         }
         
-        if (!found) {
-            throw new FileNotFoundException("No Image " + image + " found!");
-        }
         return images.get(image);
         
     }

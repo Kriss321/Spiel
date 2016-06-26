@@ -3,6 +3,7 @@
 <map version="1.0" orientation="orthogonal" renderorder="right-down" width="40" height="24" tilewidth="32" tileheight="32" nextobjectid="1">
  <properties>
   <property name="Gravity" type="float" value="9.8100000000000005"/>
+  <property name="test" type="float" value="0"/>
  </properties>
  <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32" tilecount="100" columns="10">
   <image source="../Teils/tileset.png" width="320" height="320"/>
@@ -12,9 +13,9 @@
    H4sIAAAAAAAAA+2WwQoAIAhDtf//6E5BeCqWzGQPdun0wIa6mbkCpyLyu2OE7H7rjclP/7Cq10J+GB38Yt8zgvgx91aH+TKRH0b0Q7p2w2mvWTdi9RtWfnX9XuyzTD9GJvMav+kADwAA
   </data>
  </layer>
- <layer name="Startpoints" width="40" height="24">
+ <layer name="Kachelebene 2" width="40" height="24">
   <data encoding="base64" compression="gzip">
-   H4sIAAAAAAAAA+3WMQ0AMAwEsVdplj+PDIHQIYpqI7jxEn5xpwMWO9MBAPDAAwC0Auzh85YADwAA
+   H4sIAAAAAAAAA+3WMQEAAAjDsPnEvw8OROwgUdCzCV9MOwAAqPAAAGcBesajlwAPAAA=
   </data>
  </layer>
 </map>

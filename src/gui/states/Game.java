@@ -5,6 +5,7 @@
  */
 package gui.states;
 
+import entity.EntityManager;
 import main.Resources;
 import input.MyKeyboard;
 import java.io.FileNotFoundException;
@@ -26,6 +27,7 @@ import org.newdawn.slick.state.StateBasedGame;
 public class Game extends BasicGameState {
     
     private static MapManager mapManager;
+    private static EntityManager entityManager;
     
     private Image background;
 
@@ -37,13 +39,10 @@ public class Game extends BasicGameState {
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
-        try {
-            background = Resources.getImage("Game");
-        } catch (FileNotFoundException ex) {
-            System.err.println(ex);
-        }
+        background = Resources.getImage("Game");
         
         mapManager = new MapManager();
+        entityManager = new EntityManager();
         System.out.println("InitGame: " + (System.currentTimeMillis() - time) + " ms");
     }
 
@@ -51,17 +50,28 @@ public class Game extends BasicGameState {
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
         mapManager.renderMap(0, 0, 0);
-        if (MyKeyboard.keyboard[Input.KEY_F3]) {
-            g.drawString("FPS: " + container.getFPS(), 10, 10);
-        }
+        entityManager.drawEntitys(g);
+        debug(container, g);
+        g.drawLine(0, 544, 300, 544);
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
+        entityManager.moveEntitys(delta);
     }
     
     public static void loadMap(String name){
         mapManager.loadMap(name);
+    }
+    
+    public static void loadEntity(){
+        entityManager.loadEntitys();
+    }
+    
+    private void debug(GameContainer container, Graphics g){
+        if (MyKeyboard.keyboard[Input.KEY_F3]) {
+            g.drawString("FPS: " + container.getFPS(), 10, 10);
+        }
     }
     
 }
