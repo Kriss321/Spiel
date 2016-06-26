@@ -93,7 +93,6 @@ public class Menu extends BasicGameState {
         if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
             if (selectedMap != -1) {
                 Game.loadMap(selectedMap());
-                Game.loadEntity();
                 Window.game.enterState(1);
                 Window.state = 1;
             }

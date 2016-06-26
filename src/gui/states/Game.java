@@ -64,10 +64,6 @@ public class Game extends BasicGameState {
         mapManager.loadMap(name);
     }
     
-    public static void loadEntity(){
-        entityManager.loadEntitys();
-    }
-    
     private void debug(GameContainer container, Graphics g){
         if (MyKeyboard.keyboard[Input.KEY_F3]) {
             g.drawString("FPS: " + container.getFPS(), 10, 10);

@@ -5,6 +5,7 @@
  */
 package map;
 
+import entity.EntityManager;
 import org.newdawn.slick.SlickException;
 
 /**
@@ -18,6 +19,7 @@ public class MapManager {
     public void loadMap(String name) {
         try {
             map = new Map(name);
+            EntityManager.loadEntitys(Integer.parseInt(map.getMap().getMapProperty("Spieler", map.getStartPoitCount())));
         } catch (SlickException ex) {
             System.err.println(ex);
         }
