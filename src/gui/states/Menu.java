@@ -5,12 +5,14 @@
  */
 package gui.states;
 
+import entity.EntityManager;
 import main.Resources;
 import gui.Window;
 import input.MyKeyboard;
 import input.MyMouse;
-import java.io.FileNotFoundException;
 import java.util.Set;
+import map.MapManager;
+import static map.MapManager.playerCount;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
@@ -31,21 +33,24 @@ public class Menu extends BasicGameState {
     
     private static int mouseX;
     private static int mouseY;
-    private static int posX;
-    private static int posY;
+    private static int xMapList;
+    private static int yMapList;
+    private static int xPlayerList;
+    private static int yPlayerList;
     private static int leftSideButton;
     private static int topSideButton;
     private static int selectedMap = -1;
+    private static int selectedPlayer = -1;
     
     private static Image background;
     private static Image btnStart;
     
     private static Object[] maps;
     private static Color[] mapSelect;
+    private static Color[] playerSelect;
     
-    TrueTypeFont fontMap;
-    AngelCodeFont fontMapHeadline;
-    AngelCodeFont fontMaps;
+    AngelCodeFont fontHeadline;
+    AngelCodeFont font;
 
     @Override
     public int getID() {
@@ -60,8 +65,8 @@ public class Menu extends BasicGameState {
         leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
         topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
 
-        fontMapHeadline = Resources.getFont("Comic Sans MS", "32 - bold italic");
-        fontMaps = Resources.getFont("Comic Sans MS", "28 - bold");
+        fontHeadline = Resources.getFont("Comic Sans MS", "32 - bold italic");
+        font = Resources.getFont("Comic Sans MS", "28 - bold");
         Set<String> temp;
         maps = Resources.getAllMaps().toArray();
         mapSelect = new Color[maps.length];
@@ -69,7 +74,7 @@ public class Menu extends BasicGameState {
             mapSelect[i] = Color.white;
         }
         
-        System.out.println("initMenu: " + (System.currentTimeMillis()-time) + " ms");
+        System.out.println("InitMenu: " + (System.currentTimeMillis()-time) + " ms");
     }
 
     @Override
@@ -79,7 +84,7 @@ public class Menu extends BasicGameState {
 
         debug(container, g);
         renderMapList(container, g);
-
+        renderPlayerCountList(container, g);
     }
 
     @Override
@@ -89,30 +94,48 @@ public class Menu extends BasicGameState {
         mouseEvent();
     }
     
-    public static void mousClicked(){
+    public static void mouseClicked(){
         if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
             if (selectedMap != -1) {
-                Game.loadMap(selectedMap());
+                EntityManager.loadEntitys(selectedPlayer+1);
                 Window.game.enterState(1);
                 Window.state = 1;
             }
-        } else if ((mouseX >= posX) && (mouseX <= (posX + 200)) && (mouseY >= posY) && (mouseY <= (posY + 45 + maps.length * 28))) {
+        } else if ((mouseX >= xMapList) && (mouseX <= (xMapList + 200)) && (mouseY >= yMapList) && (mouseY <= (yMapList + 45 + maps.length * 28))) {
             for (int i = 0; i < maps.length; i++) {
-                if (mouseY >= posY + 38 + (i * 28) && mouseY <= posY + 38 + 28 + (i * 28)) {
+                if (mouseY >= yMapList + 38 + (i * 28) && mouseY <= yMapList + 38 + 28 + (i * 28)) {
                     if (mapSelect[i] != Color.cyan) {
                         mapSelect[i] = Color.cyan;
                         if (selectedMap != -1) {
                             mapSelect[selectedMap] = Color.white;
                         }
                         selectedMap = i;
+                        Game.loadMap(selectedMap());
+                        playerSelect = new Color[MapManager.playerCount];
+                        playerSelect[0] = Color.green;
+                        selectedPlayer = 0;
+                        for (int x = 1; x < playerSelect.length; x++) {
+                            playerSelect[x] = Color.white;
+                        }
                     } else {
                         mapSelect[i] = Color.blue;
                         selectedMap = -1;
                     }
                 }
             }
-            
 
+        } else if (selectedMap != -1 && (mouseX >= xPlayerList) && (mouseX <= (xPlayerList + 200)) && (mouseY >= yPlayerList) && (mouseY <= (yPlayerList + 45 + MapManager.playerCount * 28))) {
+            for (int i = 0; i < MapManager.playerCount; i++) {
+                if (mouseY >= yPlayerList + 38 + (i * 28) && mouseY <= yPlayerList + 38 + 28 + (i * 28)) {
+                    if (selectedPlayer != i) {
+                        playerSelect[i] = Color.cyan;
+                        if (selectedPlayer != -1) {
+                            playerSelect[selectedPlayer] = Color.white;
+                        }
+                        selectedPlayer = i;
+                    }
+                }
+            }
         }
     }
     
@@ -127,10 +150,10 @@ public class Menu extends BasicGameState {
             } else {
                 btnStart = Resources.getImage("btnStartHover");
             }
-        } else if ((mouseX >= posX) && (mouseX <= (posX + 200)) && (mouseY >= posY) && (mouseY <= (posY + 45 + maps.length * 28))) {
+        } else if ((mouseX >= xMapList) && (mouseX <= (xMapList + 200)) && (mouseY >= yMapList) && (mouseY <= (yMapList + 45 + maps.length * 28))) {
 
             for (int i = 0; i < maps.length; i++) {
-                if (mouseY >= posY + 38 + (i * 28) && mouseY <= posY + 38 + 28 + (i * 28)) {
+                if (mouseY >= yMapList + 38 + (i * 28) && mouseY <= yMapList + 38 + 28 + (i * 28)) {
                     if (selectedMap == i) {
                         mapSelect[i] = Color.cyan;
                     } else {
@@ -139,11 +162,32 @@ public class Menu extends BasicGameState {
                 }
             }
             for (int i = 0; i < maps.length; i++) {
-                if (mouseY <= posY + 38 + (i * 28) || mouseY >= posY + 38 + 28 + (i * 28)) {
+                if (mouseY <= yMapList + 38 + (i * 28) || mouseY >= yMapList + 38 + 28 + (i * 28)) {
                     if (selectedMap == i) {
                         mapSelect[i] = Color.green;
                     } else {
                         mapSelect[i] = Color.white;
+                    }
+                }
+            }
+
+        } else if (selectedMap != -1 && (mouseX >= xPlayerList) && (mouseX <= (xPlayerList + 200)) && (mouseY >= yPlayerList) && (mouseY <= (yPlayerList + 45 + MapManager.playerCount * 28))) {
+
+            for (int i = 0; i < MapManager.playerCount; i++) {
+                if (mouseY >= yPlayerList + 38 + (i * 28) && mouseY <= yPlayerList + 38 + 28 + (i * 28)) {
+                    if (selectedPlayer == i) {
+                        playerSelect[i] = Color.cyan;
+                    } else {
+                        playerSelect[i] = Color.blue;
+                    }
+                }
+            }
+            for (int i = 0; i < MapManager.playerCount; i++) {
+                if (mouseY <= yPlayerList + 38 + (i * 28) || mouseY >= yPlayerList + 38 + 28 + (i * 28)) {
+                    if (selectedPlayer == i) {
+                        playerSelect[i] = Color.green;
+                    } else {
+                        playerSelect[i] = Color.white;
                     }
                 }
             }
@@ -157,10 +201,19 @@ public class Menu extends BasicGameState {
                     mapSelect[i] = Color.white;
                 }
             }
+            if (selectedMap != -1) {
+                for (int i = 0; i < MapManager.playerCount; i++) {
+                    if (selectedPlayer == i) {
+                        playerSelect[i] = Color.green;
+                    } else {
+                        playerSelect[i] = Color.white;
+                    }
+                }
+            }
         }
     }
     
-    private void debug(GameContainer container, Graphics g){
+    private void debug(GameContainer container, Graphics g) {
         if (MyKeyboard.keyboard[Input.KEY_F3]) {
             g.drawString("FPS: " + container.getFPS(), 10, 10);
             g.drawString("Mouse x: " + String.valueOf(mouseX) + ", y: " + String.valueOf(mouseY), 10, 25);
@@ -168,17 +221,32 @@ public class Menu extends BasicGameState {
         }
     }
     
-    private void renderMapList(GameContainer container, Graphics g){
-        posX = 160;
-        posY = container.getHeight()/2 - (45+maps.length*28)/2;
+    private void renderMapList(GameContainer container, Graphics g) {
+        xMapList = leftSideButton/2-100;
+        yMapList = container.getHeight()/2 - (45+maps.length*28)/2;
         g.setColor(Color.lightGray);
-        g.fillRoundRect(posX, posY, 200, 45+maps.length*28, 3);
-        fontMapHeadline.drawString(posX+50, posY+5, "Maps:", Color.orange);
-        int y = posY+35;
+        g.fillRoundRect(xMapList, yMapList, 200, 45+maps.length*28, 3);
+        fontHeadline.drawString(xMapList+50, yMapList+5, "Maps:", Color.orange);
+        int y = yMapList+35;
         for (int i = 0; i < maps.length; i++) {
             String temp = maps[i].toString();
-            fontMaps.drawString(posX+10, y, temp, mapSelect[i]);
+            font.drawString(xMapList+10, y, temp, mapSelect[i]);
             y += 28;
+        }
+    }
+    
+    private void renderPlayerCountList(GameContainer container, Graphics g) {
+        if (selectedMap != -1) {
+            xPlayerList = leftSideButton + btnStart.getWidth() + leftSideButton / 2 - 100;
+            yPlayerList = container.getHeight() / 2 - (45 + MapManager.playerCount * 28) / 2;
+            g.setColor(Color.lightGray);
+            g.fillRoundRect(xPlayerList, yPlayerList, 200, 45 + MapManager.playerCount * 28, 3);
+            fontHeadline.drawString(xPlayerList+20, yPlayerList+5, "Spieleranzahl:", Color.orange);
+            int y = yPlayerList+35;
+            for (int i = 0; i < MapManager.playerCount; i++) {
+                font.drawString(xPlayerList+10, y, (i+1) + " Player", playerSelect[i]);
+                y += 28;
+            }
         }
     }
 }
