@@ -5,7 +5,6 @@
  */
 package map;
 
-import entity.EntityManager;
 import org.newdawn.slick.SlickException;
 
 /**

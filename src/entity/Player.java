@@ -6,7 +6,6 @@
 package entity;
 
 import gui.Camera;
-import gui.states.Game;
 import input.MyKeyboard;
 import main.Config;
 import main.Resources;

@@ -22,12 +22,6 @@ public class Camera {
     public static int mapPosX = 0;
     public static int mapPosY = 0;
     
-    private static int playerCount = 2;
-    
-    public Camera() {
-        //playerCount = EntityManager.entitys.length;
-    }
-    
     public void renderMap(MapManager mapManager, Graphics g) {
         mapManager.renderMap(mapPosX, mapPosY, 0);
         if (MyKeyboard.keyboard[Input.KEY_F3]) {
@@ -36,7 +30,7 @@ public class Camera {
     }
     
     public void calcPos(GameContainer container) {
-        if (playerCount == 1) {
+        if (MapManager.playerCount == 1) {
             if (EntityManager.entitys[0].getPosX() < (container.getWidth() / 2)) {
                 mapPosX = 0;
             } else if (EntityManager.entitys[0].getPosX() > (MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth() - container.getWidth() / 2)) {
