@@ -14,7 +14,7 @@ import org.newdawn.slick.Graphics;
  */
 public class EntityManager {
     
-    protected static Entity[] entitys;
+    public static Entity[] entitys;
     private Entity e;
     private Entity p;
     

@@ -13,7 +13,7 @@ import org.newdawn.slick.GameContainer;
  */
 public class Engine {
     
-    public Engine(GameContainer container){
+    public static void loadEngine(GameContainer container){
         container.setVSync(true);
         container.setShowFPS(false);
     }

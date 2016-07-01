@@ -24,7 +24,7 @@ public class Resources{
     private static Map<String, String> maps;
     private static Map<String, Map<String, AngelCodeFont>> fonts;
     
-    public Resources(){
+    public static void loadResources(){
         images = new HashMap();
         maps = new HashMap();
         fonts = new HashMap();
@@ -97,7 +97,7 @@ public class Resources{
         
     }
     
-    private Image loadImage(String path) throws SlickException {
+    private static Image loadImage(String path) throws SlickException {
         return new Image(path);
     }
     
@@ -105,7 +105,7 @@ public class Resources{
         return new TiledMap(maps.get(name));
     }
     
-    private AngelCodeFont loadFont(String name) throws SlickException {
+    private static AngelCodeFont loadFont(String name) throws SlickException {
         return new AngelCodeFont(name+".fnt", new Image(name+".png"));
     }
     

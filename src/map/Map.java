@@ -27,6 +27,7 @@ public class Map {
         setGravity();
         findStartPoints();
         startPoints.size();
+        System.out.println(map.getWidth());
     }
     
     public void findStartPoints(){

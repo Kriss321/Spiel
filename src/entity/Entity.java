@@ -27,8 +27,6 @@ public interface Entity {
     
     public void slowDown(int delta);
     
-    public boolean collisionWorld(float x, float y);
-    
     public boolean collisionEntity(float x, float y);
     
     public void delta(int delta);

@@ -6,6 +6,8 @@
 package map;
 
 import entity.EntityManager;
+import gui.Camera;
+import gui.states.Game;
 import org.newdawn.slick.SlickException;
 
 /**
@@ -38,6 +40,16 @@ public class MapManager {
     
     public void renderMap(int x, int y, int layer){
         map.renderMap(x, y, layer);
+    }
+    
+    public static boolean collisionMap(float x, float y) {
+        if (x >= 0 && x <= (map.getMap().getWidth() * map.getMap().getTileWidth()) && y >= 0 && y <= (map.getMap().getHeight() * map.getMap().getTileHeight())) {
+            if (map.getMap().getTileId((int) (x / map.getMap().getTileWidth()), (int) (y / map.getMap().getTileHeight()), map.getMap().getLayerIndex("Solid")) != 0) {
+                return true;
+            }
+        }
+
+        return false;
     }
     
 }

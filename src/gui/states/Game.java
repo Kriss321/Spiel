@@ -6,11 +6,9 @@
 package gui.states;
 
 import entity.EntityManager;
+import gui.Camera;
 import main.Resources;
 import input.MyKeyboard;
-import java.io.FileNotFoundException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import map.MapManager;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -49,15 +47,15 @@ public class Game extends BasicGameState {
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
-        mapManager.renderMap(0, 0, 0);
+        Camera.renderMap(mapManager, g);
         entityManager.drawEntitys(g);
         debug(container, g);
-        g.drawLine(0, 544, 300, 544);
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         entityManager.moveEntitys(delta);
+        Camera.calcPos(container);
     }
     
     public static void loadMap(String name){

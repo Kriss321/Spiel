@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="60" height="37" tilewidth="32" tileheight="32" nextobjectid="1">
+ <properties>
+  <property name="Gravity" type="float" value="9.8100000000000005"/>
+ </properties>
+ <tileset firstgid="1" name="tileset" tilewidth="32" tileheight="32" tilecount="100" columns="10">
+  <image source="../Teils/tileset.png" width="320" height="320"/>
+ </tileset>
+ <layer name="Solid" width="60" height="37">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+2XQQ6AMAgE6f8/7dVDY9oKdNllkh5VJuIKw8yG2FGhfblR6/FoN7TcYH6XM9qXm/blZubLPJNVrv2E9sXD87uq4OtJpC9i3n09G6E+b5hcVojuZzSifBF2vujsqDCXIdSQSftyg+oblQOr16Lmzy4Va/5Dhi9SX6DUkYWC45v2rcHp/8rbV21+Xt0Zbu0Wu/f19rnlq3QeCdrQobAiAAA=
+  </data>
+ </layer>
+ <layer name="Startpoints" width="60" height="37">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OMQEAAAgDoPW0fw+fdfAQEpDwwVwHAAAAAAAAAABqAdO5FeywIgAA
+  </data>
+ </layer>
+</map>
