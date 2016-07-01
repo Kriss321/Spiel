@@ -26,6 +26,7 @@ public class Game extends BasicGameState {
     
     private static MapManager mapManager;
     private static EntityManager entityManager;
+    private static Camera camera;
     
     private Image background;
 
@@ -41,13 +42,14 @@ public class Game extends BasicGameState {
         
         mapManager = new MapManager();
         entityManager = new EntityManager();
+        camera = new Camera();
         System.out.println("InitGame: " + (System.currentTimeMillis() - time) + " ms");
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
-        Camera.renderMap(mapManager, g);
+        camera.renderMap(mapManager, g);
         entityManager.drawEntitys(g);
         debug(container, g);
     }
@@ -55,7 +57,7 @@ public class Game extends BasicGameState {
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         entityManager.moveEntitys(delta);
-        Camera.calcPos(container);
+        camera.calcPos(container);
     }
     
     public static void loadMap(String name){
