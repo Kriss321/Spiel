@@ -12,7 +12,6 @@ import input.MyKeyboard;
 import input.MyMouse;
 import java.util.Set;
 import map.MapManager;
-import static map.MapManager.playerCount;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.AngelCodeFont;
 import org.newdawn.slick.Color;
@@ -21,7 +20,6 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
-import org.newdawn.slick.TrueTypeFont;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
