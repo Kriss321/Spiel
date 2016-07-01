@@ -17,11 +17,8 @@ public class MyKeyboard implements KeyListener {
     
     public static boolean[] keyboard = new boolean[250];
     
-    private GameContainer container;
-    
-    public MyKeyboard(GameContainer container){
-        container.getInput().addKeyListener(this);
-        this.container = container;
+    public static void loadMyKeyboard(GameContainer container){
+        container.getInput().addKeyListener(new MyKeyboard());
     }
 
     @Override

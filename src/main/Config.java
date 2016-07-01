@@ -16,7 +16,7 @@ public class Config {
     
     private static Map<String, String> config;
     
-    public Config() {
+    public static void loadConfig() {
         config = new HashMap();
         config.put("p0.move.right", "32");
         config.put("p0.move.left", "30");

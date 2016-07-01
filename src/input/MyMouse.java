@@ -17,13 +17,10 @@ import org.newdawn.slick.MouseListener;
  */
 public class MyMouse implements MouseListener {
     
-    public static boolean[] mouse = new boolean[5]; 
-    
-    private GameContainer container;
+    public static boolean[] mouse = new boolean[5];
 
-    public MyMouse(GameContainer container) {
-        container.getInput().addMouseListener(this);
-        this.container = container;
+    public static void loadMyMouse(GameContainer container) {
+        container.getInput().addMouseListener(new MyMouse());
     }
 
     @Override

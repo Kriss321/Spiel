@@ -23,6 +23,7 @@ import org.newdawn.slick.state.StateBasedGame;
 public class Window extends StateBasedGame{
     
     public static int state = 0;
+    
     public static StateBasedGame game;
 
     public Window() {
@@ -33,11 +34,11 @@ public class Window extends StateBasedGame{
     @Override
     public void initStatesList(GameContainer container) throws SlickException {
         long time = System.currentTimeMillis();
-        new Config();
-        new Engine(container);
-        new Resources();
-        new MyKeyboard(container);
-        new MyMouse(container);
+        Config.loadConfig();
+        Resources.loadResources();
+        Engine.loadEngine(container);
+        MyKeyboard.loadMyKeyboard(container);
+        MyMouse.loadMyMouse(container);
         this.addState(new Menu());
         this.addState(new Game());
         System.out.println("Game: " + (System.currentTimeMillis() - time) + " ms");

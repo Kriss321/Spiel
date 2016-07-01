@@ -214,7 +214,7 @@ public class Menu extends BasicGameState {
     private void debug(GameContainer container, Graphics g) {
         if (MyKeyboard.keyboard[Input.KEY_F3]) {
             g.drawString("FPS: " + container.getFPS(), 10, 10);
-            g.drawString("Mouse x: " + String.valueOf(mouseX) + ", y: " + String.valueOf(mouseY), 10, 25);
+            g.drawString("Mouse x: " + String.valueOf(Mouse.getX()) + ", y: " + String.valueOf(Mouse.getY()), 10, 25);
             g.drawString("Map: " + String.valueOf(selectedMap), 10, 40);
         }
     }
