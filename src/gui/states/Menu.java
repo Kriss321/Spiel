@@ -11,6 +11,7 @@ import gui.Window;
 import input.MyKeyboard;
 import input.MyMouse;
 import java.util.Set;
+import main.Engine;
 import map.MapManager;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.AngelCodeFont;
@@ -90,6 +91,7 @@ public class Menu extends BasicGameState {
         mouseX = Mouse.getX();
         mouseY = Math.abs(Mouse.getY()-container.getHeight());
         mouseEvent();
+        fullScreen(container);
     }
     
     public static void mouseClicked(){
@@ -245,6 +247,15 @@ public class Menu extends BasicGameState {
                 font.drawString(xPlayerList+10, y, (i+1) + " Player", playerSelect[i]);
                 y += 28;
             }
+        }
+    }
+    
+    private void fullScreen(GameContainer container) {
+        if (MyKeyboard.keyboard[Input.KEY_F11]) {
+            MyKeyboard.keyboard[Input.KEY_F11] = false;
+            Engine.fullScreen(container);
+            leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
+            topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
         }
     }
 }

@@ -15,6 +15,8 @@ import org.newdawn.slick.SlickException;
  */
 public class Main {
     
+    public static AppGameContainer container;
+    
     /**
      * Entry point to our test
      *
@@ -22,12 +24,14 @@ public class Main {
      */
     public static void main(String[] argv) {
         try {
-            AppGameContainer container = new AppGameContainer(new Window());
+            container = new AppGameContainer(new Window());
             container.setDisplayMode(1280, 768, false);
             container.start();
         } catch (SlickException e) {
             e.printStackTrace();
         }
     }
+    
+    
     
 }

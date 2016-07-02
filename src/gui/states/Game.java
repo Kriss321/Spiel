@@ -9,6 +9,7 @@ import entity.EntityManager;
 import gui.Camera;
 import main.Resources;
 import input.MyKeyboard;
+import main.Engine;
 import map.MapManager;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -24,6 +25,7 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Game extends BasicGameState {
     
+    public static GameContainer container;
     private static MapManager mapManager;
     private static EntityManager entityManager;
     private static Camera camera;
@@ -40,6 +42,7 @@ public class Game extends BasicGameState {
         long time = System.currentTimeMillis();
         background = Resources.getImage("Game");
         
+        this.container = container;
         mapManager = new MapManager();
         entityManager = new EntityManager();
         camera = new Camera();
@@ -58,6 +61,7 @@ public class Game extends BasicGameState {
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         entityManager.moveEntitys(delta);
         camera.calcPos(container);
+        fullScreen(container);
     }
     
     public static void loadMap(String name){
@@ -70,4 +74,10 @@ public class Game extends BasicGameState {
         }
     }
     
+    private void fullScreen(GameContainer container) {
+        if (MyKeyboard.keyboard[Input.KEY_F11]) {
+            MyKeyboard.keyboard[Input.KEY_F11] = false;
+            Engine.fullScreen(container);
+        }
+    }
 }

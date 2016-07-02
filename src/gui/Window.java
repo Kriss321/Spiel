@@ -41,6 +41,7 @@ public class Window extends StateBasedGame{
         MyMouse.loadMyMouse(container);
         this.addState(new Menu());
         this.addState(new Game());
+        //container.
         System.out.println("Game: " + (System.currentTimeMillis() - time) + " ms");
     }
     

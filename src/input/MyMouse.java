@@ -29,14 +29,15 @@ public class MyMouse implements MouseListener {
 
     @Override
     public void mouseClicked(int button, int x, int y, int clickCount) {
-        if(Window.state == 0){
-            Menu.mouseClicked();
-        }
+        
         
     }
 
     @Override
     public void mousePressed(int button, int x, int y) {
+        if(Window.state == 0){
+            Menu.mouseClicked();
+        }
         mouse[button] = true;
     }
 

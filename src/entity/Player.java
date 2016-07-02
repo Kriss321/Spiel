@@ -6,6 +6,7 @@
 package entity;
 
 import gui.Camera;
+import gui.states.Game;
 import input.MyKeyboard;
 import main.Config;
 import main.Resources;
@@ -107,6 +108,9 @@ public class Player implements Entity {
         } else if (collisionEntity(this.posX + width + this.velX * delta, this.posY + 1) || collisionEntity(this.posX + this.width + this.velX * delta, this.posY + this.height - 1)) {
             this.posX = this.collidedEntity.getPosX() - this.width;
             this.velX = 0;
+        } else if (this.posX + Camera.mapPosX + width + this.velX * delta >= Game.container.getWidth()) {
+            this.posX = Game.container.getWidth() - this.width - Camera.mapPosX;
+            this.velX = 0;
         }
     }
 
@@ -128,6 +132,9 @@ public class Player implements Entity {
             this.velX = 0;
         } else if (collisionEntity(this.posX + this.velX * delta, this.posY + 1) || collisionEntity(this.posX + this.velX * delta, this.posY + this.height - 1)) {
             this.posX = this.collidedEntity.getPosX() + this.collidedEntity.getWidth();
+            this.velX = 0;
+        } else if (this.posX + Camera.mapPosX + this.velX * delta <= 0) {
+            this.posX = -Camera.mapPosX;
             this.velX = 0;
         }
 
