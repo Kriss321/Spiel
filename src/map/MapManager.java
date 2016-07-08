@@ -16,7 +16,7 @@ public class MapManager {
     public static Map map;
     public static int playerCount;
     
-    public void loadMap(String name) {
+    public static void loadMap(String name) {
         try {
             map = new Map(name);
             playerCount = map.getStartPoitCount();
@@ -26,17 +26,17 @@ public class MapManager {
         
     }
     
-    public void reloadMap() throws SlickException {
+    public static void reloadMap() throws SlickException {
         if(map != null){
             map = new Map(map.getName());
         }
     }
     
-    public void renderMap(int x, int y) {
+    public static void renderMap(int x, int y) {
         map.renderMap(x, y);
     }
     
-    public void renderMap(int x, int y, int layer){
+    public static void renderMap(int x, int y, int layer){
         map.renderMap(x, y, layer);
     }
     

@@ -33,7 +33,7 @@ public class Map {
         int player = 0;
         for (int x = 0; x < map.getWidth(); x++) {
             for (int y = 0; y < map.getHeight(); y++) {
-                if(map.getTileId(x, y, 1) == 91){
+                if(map.getTileId(x, y, 1) == 91 || map.getTileId(x, y, 1) == 361){
                     float[] point = {x, y};
                     startPoints.put(player, point);
                     player++;

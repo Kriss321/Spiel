@@ -7,9 +7,11 @@ package gui.states;
 
 import entity.EntityManager;
 import gui.Camera;
+import gui.Window;
 import main.Resources;
 import input.MyKeyboard;
-import main.Engine;
+import java.util.Observable;
+import java.util.Observer;
 import map.MapManager;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -23,61 +25,87 @@ import org.newdawn.slick.state.StateBasedGame;
  *
  * @author Kristof
  */
-public class Game extends BasicGameState {
+public class Game extends BasicGameState implements Observer {
     
     public static GameContainer container;
-    private static MapManager mapManager;
-    private static EntityManager entityManager;
-    private static Camera camera;
     
-    private Image background;
+    private static Image background;
 
     @Override
     public int getID() {
-        return 1;
+        return Window.ID_GAME;
     }
 
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
-        background = Resources.getImage("Game");
-        
-        this.container = container;
-        mapManager = new MapManager();
-        entityManager = new EntityManager();
-        camera = new Camera();
+        Game.background = Resources.getImage("Game");
+        Game.container = container;
         System.out.println("InitGame: " + (System.currentTimeMillis() - time) + " ms");
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
-        camera.renderMap(mapManager, g);
-        entityManager.drawEntitys(g);
+        Camera.setScale(g);
+        Camera.renderMap(g);
+        Camera.renderEntity(g);
+        Camera.removeScale(g);
         debug(container, g);
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-        entityManager.moveEntitys(delta);
-        camera.calcPos(container);
-        fullScreen(container);
+        EntityManager.moveEntitys(delta);
+        Camera.calcMapPos(container);
+        Window.fullScreen(container);
+        changeState();
     }
-    
+
+    @Override
+    public void update(Observable o, Object arg) {
+        if(arg instanceof Object[]) {
+            Object[] argument = (Object[])arg;
+            if (argument[0] instanceof String) {
+                String s = (String)argument[0];
+                if (s.equalsIgnoreCase("fullscreen") && argument[1] instanceof GameContainer) {
+                    GameContainer container = (GameContainer)argument[1];
+                    if (Window.state == 1) {
+                        Camera.calcScale(container);
+                    }
+                } else if (s.equalsIgnoreCase("changeState") && argument[1] instanceof Integer) {
+                    int state = (int)argument[1];
+                    if (Window.state == state) {
+                        Camera.calcScale(container);
+                    }
+                }
+                
+            }
+            
+        }
+    }
+
     public static void loadMap(String name){
-        mapManager.loadMap(name);
+        MapManager.loadMap(name);
     }
     
     private void debug(GameContainer container, Graphics g){
         if (MyKeyboard.keyboard[Input.KEY_F3]) {
             g.drawString("FPS: " + container.getFPS(), 10, 10);
+            g.drawString("Map: " + Camera.mapPosX + " - " + Camera.mapPosY, 100, 10);
+            EntityManager.debug(g);
         }
     }
     
-    private void fullScreen(GameContainer container) {
-        if (MyKeyboard.keyboard[Input.KEY_F11]) {
-            MyKeyboard.keyboard[Input.KEY_F11] = false;
-            Engine.fullScreen(container);
+    private void changeState() {
+        if (MyKeyboard.keyboard[Input.KEY_ESCAPE]) {
+            MyKeyboard.keyboard[Input.KEY_ESCAPE] = false;
+            Window.setState(Window.ID_INGAMEMENU);
         }
     }
+    
+    public static Image getBackground() {
+        return Game.background;
+    }
+
 }
