@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="45" tilewidth="16" tileheight="16" nextobjectid="1">
+ <tileset firstgid="1" name="tileset" tilewidth="16" tileheight="16" tilecount="400" columns="20">
+  <image source="../Teils/tileset.png" width="320" height="320"/>
+ </tileset>
+ <layer name="Solid" width="80" height="45">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3bQQrCMBBA0VS9gtr7n9S4KAyBUjqfKUT/gzDbEn9jN1laa7e+FmdqPvt6OdNz20edM/anc+yPsT/G/hj7Y+yPsT/G/hj7Y+yPsT/G/hj7Y+yPsT/G/hj7Y+yPsT/G/hj7Y+yPsT/G/hj7Y+yPsT/G/hj7Y+yPsT/G/hj7Y6r6u/f1SMzZVPX37mtNzNl4/jG/cP7FMyCuK86D2fv77lM8A+JaW/0+ztxf3Lu9ey3V5+ps/cV3NXZ3dL+lyvh7Zb87rpp7/9tH96uqnmd8f7PfHf86t337AJwn3B1AOAAA
+  </data>
+ </layer>
+ <layer name="Startpoints" width="80" height="45">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3OMREAAAgEoDeu/QuYwnMQEpAAAAAAAAAAAAAAAPBZ1/UAAIANA1g4vHFAOAAA
+  </data>
+ </layer>
+</map>

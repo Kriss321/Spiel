@@ -5,14 +5,12 @@
  */
 package gui.states;
 
-import entity.EntityManager;
 import gui.Camera;
 import gui.Window;
-import main.Resources;
 import input.MyKeyboard;
 import java.util.Observable;
 import java.util.Observer;
-import map.MapManager;
+import main.Resources;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -25,41 +23,44 @@ import org.newdawn.slick.state.StateBasedGame;
  *
  * @author Kristof
  */
-public class Game extends BasicGameState implements Observer {
+public class InGameMenu extends BasicGameState implements Observer {
     
-    public static GameContainer container;
+    private static int leftSidePause;
+    private static int topSidePause;
     
-    private static Image background;
+    private Image overlay;
+    private static Image pause;
 
     @Override
     public int getID() {
-        return Window.ID_GAME;
+        return Window.ID_INGAMEMENU;
     }
 
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
-        Game.background = Resources.getImage("Game");
-        Game.container = container;
-        System.out.println("InitGame: " + (System.currentTimeMillis() - time) + " ms");
+        overlay = Resources.getImage("mapOverlay");
+        pause = Resources.getImage("Pause");
+        leftSidePause = (container.getWidth() - pause.getWidth()) / 2;
+        topSidePause = 75;
+        System.out.println("InitInGameMenu: " + (System.currentTimeMillis() - time) + " ms");
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-        g.drawImage(background, 0, 0);
+        g.drawImage(Game.getBackground(), 0, 0);
         Camera.setScale(g);
         Camera.renderMap(g);
         Camera.renderEntity(g);
         Camera.removeScale(g);
-        debug(container, g);
+        g.drawImage(overlay, 0, 0);
+        g.drawImage(pause, leftSidePause, topSidePause);
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-        EntityManager.moveEntitys(delta);
-        Camera.calcMapPos(container);
-        Window.fullScreen(container);
         changeState();
+        Window.fullScreen(container);
     }
 
     @Override
@@ -70,42 +71,20 @@ public class Game extends BasicGameState implements Observer {
                 String s = (String)argument[0];
                 if (s.equalsIgnoreCase("fullscreen") && argument[1] instanceof GameContainer) {
                     GameContainer container = (GameContainer)argument[1];
-                    if (Window.state == 1) {
-                        Camera.calcScale(container);
-                    }
-                } else if (s.equalsIgnoreCase("changeState") && argument[1] instanceof Integer) {
-                    int state = (int)argument[1];
-                    if (Window.state == state) {
-                        Camera.calcScale(container);
-                    }
+                    leftSidePause = (container.getWidth() - pause.getWidth()) / 2;
+                    //topSidePause = (container.getHeight()- pause.getHeight()) / 2;
                 }
                 
             }
             
         }
     }
-
-    public static void loadMap(String name){
-        MapManager.loadMap(name);
-    }
-    
-    private void debug(GameContainer container, Graphics g){
-        if (MyKeyboard.keyboard[Input.KEY_F3]) {
-            g.drawString("FPS: " + container.getFPS(), 10, 10);
-            g.drawString("Map: " + Camera.mapPosX + " - " + Camera.mapPosY, 100, 10);
-            EntityManager.debug(g);
-        }
-    }
     
     private void changeState() {
         if (MyKeyboard.keyboard[Input.KEY_ESCAPE]) {
             MyKeyboard.keyboard[Input.KEY_ESCAPE] = false;
-            Window.setState(Window.ID_INGAMEMENU);
+            Window.setState(Window.ID_GAME);
         }
     }
     
-    public static Image getBackground() {
-        return Game.background;
-    }
-
 }

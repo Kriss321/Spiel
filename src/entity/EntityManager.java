@@ -31,15 +31,21 @@ public class EntityManager {
         }
     }
     
-    public void drawEntitys(Graphics g) {
+    public static void drawEntitys(Graphics g) {
         for (Entity entity : entitys) {
             entity.drawEntity(g);
         }
     }
     
-    public void moveEntitys(int delta){
+    public static void moveEntitys(int delta){
         for (Entity entity : entitys) {
             entity.move(delta);
+        }
+    }
+    
+    public static void debug(Graphics g) {
+        for (Entity entity : entitys) {
+            entity.debug(g);
         }
     }
 }

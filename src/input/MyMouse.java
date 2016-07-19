@@ -30,7 +30,6 @@ public class MyMouse implements MouseListener {
     @Override
     public void mouseClicked(int button, int x, int y, int clickCount) {
         
-        
     }
 
     @Override

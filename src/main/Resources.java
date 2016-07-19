@@ -48,6 +48,17 @@ public class Resources{
                 }
             }
         }
+        dir = new File("./res/Labels");
+        for (File file : dir.listFiles()) {
+            if (!file.isHidden()) {
+                try {
+                    String name = file.getName().substring(0, file.getName().lastIndexOf("."));
+                    images.put(name, loadImage(file.getAbsolutePath()));
+                } catch (SlickException ex) {
+                    System.err.println(ex);
+                }
+            }
+        }
         
         dir = new File("./res/Buttons");
         for (File file : dir.listFiles()) {

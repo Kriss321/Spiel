@@ -8,10 +8,12 @@ package gui.states;
 import entity.EntityManager;
 import main.Resources;
 import gui.Window;
+import input.Button;
 import input.MyKeyboard;
 import input.MyMouse;
+import java.util.Observable;
+import java.util.Observer;
 import java.util.Set;
-import main.Engine;
 import map.MapManager;
 import org.lwjgl.input.Mouse;
 import org.newdawn.slick.AngelCodeFont;
@@ -21,6 +23,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.gui.MouseOverArea;
+import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -28,7 +32,7 @@ import org.newdawn.slick.state.StateBasedGame;
  *
  * @author Kristof
  */
-public class Menu extends BasicGameState {
+public class Menu extends BasicGameState implements Observer {
     
     private static int mouseX;
     private static int mouseY;
@@ -47,13 +51,18 @@ public class Menu extends BasicGameState {
     private static Object[] maps;
     private static Color[] mapSelect;
     private static Color[] playerSelect;
+
+    private AngelCodeFont fontHeadline;
+    private AngelCodeFont font;
     
-    AngelCodeFont fontHeadline;
-    AngelCodeFont font;
+    MouseOverArea test;
+    MouseOverArea test2;
+    
+    TextField abc;
 
     @Override
     public int getID() {
-        return 0;
+        return Window.ID_MENU;
     }
 
     @Override
@@ -73,6 +82,8 @@ public class Menu extends BasicGameState {
             mapSelect[i] = Color.white;
         }
         
+        
+        
         System.out.println("InitMenu: " + (System.currentTimeMillis()-time) + " ms");
     }
 
@@ -80,7 +91,7 @@ public class Menu extends BasicGameState {
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
         g.drawImage(btnStart, leftSideButton, topSideButton);
-
+        
         debug(container, g);
         renderMapList(container, g);
         renderPlayerCountList(container, g);
@@ -91,15 +102,35 @@ public class Menu extends BasicGameState {
         mouseX = Mouse.getX();
         mouseY = Math.abs(Mouse.getY()-container.getHeight());
         mouseEvent();
-        fullScreen(container);
+        Window.fullScreen(container);
+        
+        if (test.isMouseOver() && !test.isAcceptingInput()) {
+            System.out.println("test");
+        }
     }
-    
+ 
+    @Override
+    public void update(Observable o, Object arg) {
+        if(arg instanceof Object[]) {
+            Object[] argument = (Object[])arg;
+            if (argument[0] instanceof String) {
+                String s = (String)argument[0];
+                if (s.equalsIgnoreCase("fullscreen") && argument[1] instanceof GameContainer) {
+                    GameContainer container = (GameContainer)argument[1];
+                    leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
+                    topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
+                }
+                
+            }
+            
+        }
+    }
+ 
     public static void mouseClicked(){
         if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
             if (selectedMap != -1) {
                 EntityManager.loadEntitys(selectedPlayer+1);
-                Window.game.enterState(1);
-                Window.state = 1;
+                Window.setState(Window.ID_GAME);
             }
         } else if ((mouseX >= xMapList) && (mouseX <= (xMapList + 200)) && (mouseY >= yMapList) && (mouseY <= (yMapList + 45 + maps.length * 28))) {
             for (int i = 0; i < maps.length; i++) {
@@ -250,12 +281,4 @@ public class Menu extends BasicGameState {
         }
     }
     
-    private void fullScreen(GameContainer container) {
-        if (MyKeyboard.keyboard[Input.KEY_F11]) {
-            MyKeyboard.keyboard[Input.KEY_F11] = false;
-            Engine.fullScreen(container);
-            leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
-            topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
-        }
-    }
 }
