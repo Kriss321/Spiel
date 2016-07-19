@@ -25,7 +25,11 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class InGameMenu extends BasicGameState implements Observer {
     
+    private static int leftSidePause;
+    private static int topSidePause;
+    
     private Image overlay;
+    private static Image pause;
 
     @Override
     public int getID() {
@@ -36,25 +40,44 @@ public class InGameMenu extends BasicGameState implements Observer {
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
         overlay = Resources.getImage("mapOverlay");
+        pause = Resources.getImage("Pause");
+        leftSidePause = (container.getWidth() - pause.getWidth()) / 2;
+        topSidePause = 75;
         System.out.println("InitInGameMenu: " + (System.currentTimeMillis() - time) + " ms");
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(Game.getBackground(), 0, 0);
+        Camera.setScale(g);
         Camera.renderMap(g);
         Camera.renderEntity(g);
+        Camera.removeScale(g);
         g.drawImage(overlay, 0, 0);
+        g.drawImage(pause, leftSidePause, topSidePause);
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         changeState();
+        Window.fullScreen(container);
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        
+        if(arg instanceof Object[]) {
+            Object[] argument = (Object[])arg;
+            if (argument[0] instanceof String) {
+                String s = (String)argument[0];
+                if (s.equalsIgnoreCase("fullscreen") && argument[1] instanceof GameContainer) {
+                    GameContainer container = (GameContainer)argument[1];
+                    leftSidePause = (container.getWidth() - pause.getWidth()) / 2;
+                    //topSidePause = (container.getHeight()- pause.getHeight()) / 2;
+                }
+                
+            }
+            
+        }
     }
     
     private void changeState() {

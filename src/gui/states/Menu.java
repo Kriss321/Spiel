@@ -8,6 +8,7 @@ package gui.states;
 import entity.EntityManager;
 import main.Resources;
 import gui.Window;
+import input.Button;
 import input.MyKeyboard;
 import input.MyMouse;
 import java.util.Observable;
@@ -22,6 +23,8 @@ import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.gui.MouseOverArea;
+import org.newdawn.slick.gui.TextField;
 import org.newdawn.slick.state.BasicGameState;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -51,6 +54,11 @@ public class Menu extends BasicGameState implements Observer {
 
     private AngelCodeFont fontHeadline;
     private AngelCodeFont font;
+    
+    MouseOverArea test;
+    MouseOverArea test2;
+    
+    TextField abc;
 
     @Override
     public int getID() {
@@ -74,6 +82,8 @@ public class Menu extends BasicGameState implements Observer {
             mapSelect[i] = Color.white;
         }
         
+        
+        
         System.out.println("InitMenu: " + (System.currentTimeMillis()-time) + " ms");
     }
 
@@ -81,7 +91,7 @@ public class Menu extends BasicGameState implements Observer {
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
         g.drawImage(btnStart, leftSideButton, topSideButton);
-
+        
         debug(container, g);
         renderMapList(container, g);
         renderPlayerCountList(container, g);
@@ -93,6 +103,10 @@ public class Menu extends BasicGameState implements Observer {
         mouseY = Math.abs(Mouse.getY()-container.getHeight());
         mouseEvent();
         Window.fullScreen(container);
+        
+        if (test.isMouseOver() && !test.isAcceptingInput()) {
+            System.out.println("test");
+        }
     }
  
     @Override

@@ -7,11 +7,9 @@ package gui;
 
 import entity.Entity;
 import entity.EntityManager;
-import input.MyKeyboard;
 import map.MapManager;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 
 /**
  *
@@ -45,15 +43,10 @@ public class Camera {
     public static void calcScale(GameContainer container) {
         scaleX = container.getWidth()/((float)MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth());
         scaleY = container.getHeight()/((float)MapManager.map.getMap().getHeight()* MapManager.map.getMap().getTileHeight());
-        
-        System.out.println(scaleX);
-        System.out.println(scaleY);
+
         scaleX = Math.round(1000 * scaleX) / 1000f;
         scaleY = Math.round(1000 * scaleY) / 1000f;
-        
-        System.out.println(scaleX);
-        System.out.println(scaleY);
-        
+
         if (scaleX < 1 && scaleY < 1) {
             scaleX = 1;
             scaleY = 1;
