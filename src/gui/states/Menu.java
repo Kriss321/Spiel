@@ -11,6 +11,9 @@ import gui.Window;
 import input.Button;
 import input.MyKeyboard;
 import input.MyMouse;
+import input.TextFieldArea;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.Set;
@@ -34,6 +37,8 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Menu extends BasicGameState implements Observer {
     
+    private GameContainer container;
+    
     private static int mouseX;
     private static int mouseY;
     private static int xMapList;
@@ -48,14 +53,17 @@ public class Menu extends BasicGameState implements Observer {
     private static Image background;
     private static Image btnStart;
     
-    private static Object[] maps;
-    private static Color[] mapSelect;
-    private static Color[] playerSelect;
+    private static List maps;
+    private static TextFieldArea[] mapArea;
+    private static TextFieldArea[] playerArea;
+    private static boolean mapSelected = false;
+    
+    private static Button play;
 
     private AngelCodeFont fontHeadline;
     private AngelCodeFont font;
     
-    MouseOverArea test;
+    TextFieldArea test;
     MouseOverArea test2;
     
     TextField abc;
@@ -68,21 +76,41 @@ public class Menu extends BasicGameState implements Observer {
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
+        this.container = container;
         background = Resources.getImage("Main");
         btnStart = Resources.getImage("btnStart");
+        maps = Arrays.asList(Resources.getAllMaps().toArray());
+        
         leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
         topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
+        xMapList = leftSideButton/2-100;
+        yMapList = container.getHeight()/2 - (45+maps.size()*28)/2;
 
         fontHeadline = Resources.getFont("Comic Sans MS", "32 - bold italic");
         font = Resources.getFont("Comic Sans MS", "28 - bold");
-        Set<String> temp;
-        maps = Resources.getAllMaps().toArray();
-        mapSelect = new Color[maps.length];
-        for (int i = 0; i < mapSelect.length; i++) {
-            mapSelect[i] = Color.white;
+        
+        mapArea = new TextFieldArea[maps.size()];
+        int width = 190;
+        for (int i = 0; i < mapArea.length; i++) {
+            mapArea[i] = new TextFieldArea(container, xMapList, yMapList + 35 + (28 * i), 200, 28);
+            mapArea[i].setText(maps.get(i).toString());
+            mapArea[i].setFont(font);
+            if (font.getWidth(maps.get(i).toString()) > width) {
+                width = font.getWidth(maps.get(i).toString());
+            }
+        }
+        if (width > 190) {
+            width += 15;
+            xMapList = (leftSideButton-width)/2;
+            for (TextFieldArea mapArea1 : mapArea) {
+                mapArea1.setX(xMapList);
+                mapArea1.setWidth(width);
+            }
         }
         
-        
+        play = new Button(container, btnStart, leftSideButton, topSideButton);
+        play.setMouseOverImage(Resources.getImage("btnStartHover"));
+        play.setMouseDownImage(Resources.getImage("btnStartClick"));
         
         System.out.println("InitMenu: " + (System.currentTimeMillis()-time) + " ms");
     }
@@ -90,158 +118,106 @@ public class Menu extends BasicGameState implements Observer {
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
         g.drawImage(background, 0, 0);
-        g.drawImage(btnStart, leftSideButton, topSideButton);
+        //g.drawImage(btnStart, leftSideButton, topSideButton);
+        play.render(container, g);
         
         debug(container, g);
         renderMapList(container, g);
-        renderPlayerCountList(container, g);
+        renderPlayerList(container, g);
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         mouseX = Mouse.getX();
         mouseY = Math.abs(Mouse.getY()-container.getHeight());
-        mouseEvent();
         Window.fullScreen(container);
-        
-        if (test.isMouseOver() && !test.isAcceptingInput()) {
-            System.out.println("test");
-        }
+        mapSelect(container);
     }
  
     @Override
     public void update(Observable o, Object arg) {
         if(arg instanceof Object[]) {
             Object[] argument = (Object[])arg;
-            if (argument[0] instanceof String) {
+            if ((argument.length > 0) && (argument[0] instanceof String)) {
                 String s = (String)argument[0];
-                if (s.equalsIgnoreCase("fullscreen") && argument[1] instanceof GameContainer) {
+                if (s.equalsIgnoreCase("fullscreen") && (argument.length == 2) && argument[1] instanceof GameContainer) {
+                    
                     GameContainer container = (GameContainer)argument[1];
                     leftSideButton = (container.getWidth() - btnStart.getWidth()) / 2;
                     topSideButton = (container.getHeight() - btnStart.getHeight()) / 2;
-                }
-                
-            }
-            
-        }
-    }
- 
-    public static void mouseClicked(){
-        if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
-            if (selectedMap != -1) {
-                EntityManager.loadEntitys(selectedPlayer+1);
-                Window.setState(Window.ID_GAME);
-            }
-        } else if ((mouseX >= xMapList) && (mouseX <= (xMapList + 200)) && (mouseY >= yMapList) && (mouseY <= (yMapList + 45 + maps.length * 28))) {
-            for (int i = 0; i < maps.length; i++) {
-                if (mouseY >= yMapList + 38 + (i * 28) && mouseY <= yMapList + 38 + 28 + (i * 28)) {
-                    if (mapSelect[i] != Color.cyan) {
-                        mapSelect[i] = Color.cyan;
-                        if (selectedMap != -1) {
-                            mapSelect[selectedMap] = Color.white;
+                    xMapList = (leftSideButton - mapArea[0].getWidth())/2;
+                    yMapList = container.getHeight() / 2 - (45 + maps.size() * mapArea[0].getHeight()) / 2;
+                    for (int i = 0; i < mapArea.length; i++) {
+                        mapArea[i].setX(xMapList);
+                        mapArea[i].setY(yMapList + 35 + (28 * i));
+                    }
+                    if (selectedMap != -1) {
+                        xPlayerList = leftSideButton + btnStart.getWidth() + leftSideButton / 2 - 100;
+                        yPlayerList = container.getHeight() / 2 - (45 + MapManager.playerCount * 28) / 2;
+                        for (int i = 0; i < playerArea.length; i++) {
+                            playerArea[i].setX(xPlayerList);
+                            playerArea[i].setY(yPlayerList + 35 + (28 * i));
                         }
-                        selectedMap = i;
-                        Game.loadMap(selectedMap());
-                        playerSelect = new Color[MapManager.playerCount];
-                        playerSelect[0] = Color.green;
-                        selectedPlayer = 0;
-                        for (int x = 1; x < playerSelect.length; x++) {
-                            playerSelect[x] = Color.white;
-                        }
+                    }
+                    
+                } else if (s.equalsIgnoreCase("mapSelect") && (argument.length == 2) && argument[1] instanceof String) {
+                    
+                    String mapName = (String)argument[1];
+                    selectedPlayer = -1;
+                    if (selectedMap != -1) {
+                        mapArea[selectedMap].setSelected(false);
+                        
+                    } 
+                    if (selectedMap != maps.indexOf(mapName)) {
+                        selectedMap = maps.indexOf(mapName);
+                        mapSelected = true;
                     } else {
-                        mapSelect[i] = Color.blue;
                         selectedMap = -1;
                     }
-                }
-            }
-
-        } else if (selectedMap != -1 && (mouseX >= xPlayerList) && (mouseX <= (xPlayerList + 200)) && (mouseY >= yPlayerList) && (mouseY <= (yPlayerList + 45 + MapManager.playerCount * 28))) {
-            for (int i = 0; i < MapManager.playerCount; i++) {
-                if (mouseY >= yPlayerList + 38 + (i * 28) && mouseY <= yPlayerList + 38 + 28 + (i * 28)) {
-                    if (selectedPlayer != i) {
-                        playerSelect[i] = Color.cyan;
-                        if (selectedPlayer != -1) {
-                            playerSelect[selectedPlayer] = Color.white;
-                        }
-                        selectedPlayer = i;
+                    
+                    
+                } else if (s.equalsIgnoreCase("playerSelect") && (argument.length == 2) && argument[1] instanceof Integer) {
+                    
+                    int playercount = (int)argument[1];
+                    if (selectedPlayer != -1 && selectedPlayer != playercount) {
+                        playerArea[selectedPlayer].setSelected(false);
+                        selectedPlayer = playercount;
+                    } else {
+                        playerArea[selectedPlayer].setSelected(true);
+                        selectedPlayer = playercount;
                     }
+                    
+                } else if (s.equalsIgnoreCase("Start")) {
+                    
+                    if (selectedMap != -1) {
+                        EntityManager.loadEntitys(selectedPlayer + 1);
+                        Window.setState(Window.ID_GAME);
+                    }
+                    
                 }
             }
+        }
+    }
+
+    private void mapSelect(GameContainer container){
+        if (mapSelected && selectedMap != -1) {
+            mapSelected = false;
+            Game.loadMap(selectedMap());
+            playerArea = new TextFieldArea[MapManager.playerCount];
+            xPlayerList = leftSideButton + btnStart.getWidth() + leftSideButton / 2 - 100;
+            yPlayerList = container.getHeight() / 2 - (45 + MapManager.playerCount * 28) / 2;
+            for (int i = 0; i < playerArea.length; i++) {
+                playerArea[i] = new TextFieldArea(container, xPlayerList, yPlayerList + 35 + (28 * i), 200, 28);
+                playerArea[i].setText((i + 1) + " Player");
+                playerArea[i].setFont(font);
+            }
+            playerArea[0].setSelected(true);
+            selectedPlayer = 0;
         }
     }
     
     public static String selectedMap(){
-        return (String) maps[selectedMap];
-    }
-    
-    private void mouseEvent(){
-        if ((mouseX >= leftSideButton) && (mouseX <= (leftSideButton + btnStart.getWidth())) && (mouseY >= topSideButton) && (mouseY <= (topSideButton + btnStart.getHeight()))) {
-            if (MyMouse.mouse[Input.MOUSE_LEFT_BUTTON]) {
-                btnStart = Resources.getImage("btnStartClick");
-            } else {
-                btnStart = Resources.getImage("btnStartHover");
-            }
-        } else if ((mouseX >= xMapList) && (mouseX <= (xMapList + 200)) && (mouseY >= yMapList) && (mouseY <= (yMapList + 45 + maps.length * 28))) {
-
-            for (int i = 0; i < maps.length; i++) {
-                if (mouseY >= yMapList + 38 + (i * 28) && mouseY <= yMapList + 38 + 28 + (i * 28)) {
-                    if (selectedMap == i) {
-                        mapSelect[i] = Color.cyan;
-                    } else {
-                        mapSelect[i] = Color.blue;
-                    }
-                }
-            }
-            for (int i = 0; i < maps.length; i++) {
-                if (mouseY <= yMapList + 38 + (i * 28) || mouseY >= yMapList + 38 + 28 + (i * 28)) {
-                    if (selectedMap == i) {
-                        mapSelect[i] = Color.green;
-                    } else {
-                        mapSelect[i] = Color.white;
-                    }
-                }
-            }
-
-        } else if (selectedMap != -1 && (mouseX >= xPlayerList) && (mouseX <= (xPlayerList + 200)) && (mouseY >= yPlayerList) && (mouseY <= (yPlayerList + 45 + MapManager.playerCount * 28))) {
-
-            for (int i = 0; i < MapManager.playerCount; i++) {
-                if (mouseY >= yPlayerList + 38 + (i * 28) && mouseY <= yPlayerList + 38 + 28 + (i * 28)) {
-                    if (selectedPlayer == i) {
-                        playerSelect[i] = Color.cyan;
-                    } else {
-                        playerSelect[i] = Color.blue;
-                    }
-                }
-            }
-            for (int i = 0; i < MapManager.playerCount; i++) {
-                if (mouseY <= yPlayerList + 38 + (i * 28) || mouseY >= yPlayerList + 38 + 28 + (i * 28)) {
-                    if (selectedPlayer == i) {
-                        playerSelect[i] = Color.green;
-                    } else {
-                        playerSelect[i] = Color.white;
-                    }
-                }
-            }
-
-        } else {
-            btnStart = Resources.getImage("btnStart");
-            for (int i = 0; i < maps.length; i++) {
-                if (selectedMap == i) {
-                    mapSelect[i] = Color.green;
-                } else {
-                    mapSelect[i] = Color.white;
-                }
-            }
-            if (selectedMap != -1) {
-                for (int i = 0; i < MapManager.playerCount; i++) {
-                    if (selectedPlayer == i) {
-                        playerSelect[i] = Color.green;
-                    } else {
-                        playerSelect[i] = Color.white;
-                    }
-                }
-            }
-        }
+        return (String) maps.get(selectedMap);
     }
     
     private void debug(GameContainer container, Graphics g) {
@@ -253,30 +229,21 @@ public class Menu extends BasicGameState implements Observer {
     }
     
     private void renderMapList(GameContainer container, Graphics g) {
-        xMapList = leftSideButton/2-100;
-        yMapList = container.getHeight()/2 - (45+maps.length*28)/2;
         g.setColor(Color.lightGray);
-        g.fillRoundRect(xMapList, yMapList, 200, 45+maps.length*28, 3);
-        fontHeadline.drawString(xMapList+50, yMapList+5, "Maps:", Color.orange);
-        int y = yMapList+35;
-        for (int i = 0; i < maps.length; i++) {
-            String temp = maps[i].toString();
-            font.drawString(xMapList+10, y, temp, mapSelect[i]);
-            y += 28;
+        g.fillRoundRect(xMapList, yMapList, mapArea[0].getWidth(), 45 + maps.size() * mapArea[0].getHeight(), 3);
+        fontHeadline.drawString(xMapList+50, yMapList+4, "Maps:", Color.orange);
+        for (TextFieldArea textFieldArea : mapArea) {
+            textFieldArea.render(container, g);
         }
     }
     
-    private void renderPlayerCountList(GameContainer container, Graphics g) {
-        if (selectedMap != -1) {
-            xPlayerList = leftSideButton + btnStart.getWidth() + leftSideButton / 2 - 100;
-            yPlayerList = container.getHeight() / 2 - (45 + MapManager.playerCount * 28) / 2;
+    private void renderPlayerList(GameContainer container, Graphics g) {
+        if (selectedMap != -1 && selectedPlayer != -1) {
             g.setColor(Color.lightGray);
             g.fillRoundRect(xPlayerList, yPlayerList, 200, 45 + MapManager.playerCount * 28, 3);
             fontHeadline.drawString(xPlayerList+20, yPlayerList+5, "Spieleranzahl:", Color.orange);
-            int y = yPlayerList+35;
-            for (int i = 0; i < MapManager.playerCount; i++) {
-                font.drawString(xPlayerList+10, y, (i+1) + " Player", playerSelect[i]);
-                y += 28;
+            for (TextFieldArea textFieldArea : playerArea) {
+                textFieldArea.render(container, g);
             }
         }
     }

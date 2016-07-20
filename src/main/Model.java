@@ -6,6 +6,7 @@
 package main;
 
 import gui.Window;
+import input.TextFieldArea;
 import java.util.Observable;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.SlickException;
@@ -14,12 +15,12 @@ import org.newdawn.slick.SlickException;
  *
  * @author Kristof
  */
-public class MyObservable extends Observable {
+public class Model extends Observable {
     
     private final int windowHeight;
     private final int windowWidth;
 
-    public MyObservable(GameContainer container) {
+    public Model(GameContainer container) {
         this.windowHeight = container.getHeight();
         this.windowWidth = container.getWidth();
     }
@@ -52,6 +53,27 @@ public class MyObservable extends Observable {
         Object[] temp = new Object[2];
         temp[0] = "changeState";
         temp[1] = state;
+        notifyObservers(temp);
+    }
+    
+    public void textFieldAreaAction(TextFieldArea textFieldArea, String text) {
+        Object[] temp = new Object[2];
+        if (text.endsWith(" Player")) {
+            temp[0] = "playerSelect";
+            temp[1] = Integer.parseInt(String.valueOf(text.charAt(0)))-1;
+        } else {
+            temp[0] = "mapSelect";
+            temp[1] = text;
+        }
+        
+        setChanged();
+        notifyObservers(temp);
+    }
+    
+    public void buttonAction() {
+        setChanged();
+        Object[] temp = new Object[2];
+        temp[0] = "Start";
         notifyObservers(temp);
     }
 }

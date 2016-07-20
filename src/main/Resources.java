@@ -25,6 +25,7 @@ public class Resources{
     private static Map<String, Map<String, AngelCodeFont>> fonts;
     
     public static void loadResources(){
+        long time = System.currentTimeMillis();
         images = new HashMap();
         maps = new HashMap();
         fonts = new HashMap();
@@ -36,7 +37,7 @@ public class Resources{
                 maps.put(name, file.getAbsolutePath());
             }
         }
-        
+        //System.out.println("Map: " + (System.currentTimeMillis() - time) + " ms");
         dir = new File("./res/Backgrounds");
         for (File file : dir.listFiles()) {
             if (!file.isHidden()) {
@@ -48,6 +49,7 @@ public class Resources{
                 }
             }
         }
+        //System.out.println("Backgrounds: " + (System.currentTimeMillis() - time) + " ms");
         dir = new File("./res/Labels");
         for (File file : dir.listFiles()) {
             if (!file.isHidden()) {
@@ -59,7 +61,7 @@ public class Resources{
                 }
             }
         }
-        
+        //System.out.println("Labels: " + (System.currentTimeMillis() - time) + " ms");
         dir = new File("./res/Buttons");
         for (File file : dir.listFiles()) {
             if (!file.isHidden()) {
@@ -71,7 +73,7 @@ public class Resources{
                 }
             }
         }
-        
+        //System.out.println("Buttens: " + (System.currentTimeMillis() - time) + " ms");
         dir = new File("./res/Entitys");
         for (File file : dir.listFiles()) {
             if (!file.isHidden()) {
@@ -83,7 +85,7 @@ public class Resources{
                 }
             }
         }
-        
+        //System.out.println("Entitys: " + (System.currentTimeMillis() - time) + " ms");
         dir = new File("./res/Font");
         for (File file : dir.listFiles()) {
             if (!file.isHidden() && file.isDirectory()) {
@@ -105,7 +107,8 @@ public class Resources{
                 fonts.put(file.getName(), types);
             }
         }
-        
+        //System.out.println("Font: " + (System.currentTimeMillis() - time) + " ms");
+        System.out.println("Resources: " + (System.currentTimeMillis() - time) + " ms");
     }
     
     private static Image loadImage(String path) throws SlickException {
