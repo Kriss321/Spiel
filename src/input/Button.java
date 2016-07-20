@@ -5,15 +5,15 @@
  */
 package input;
 
+import gui.Window;
 import org.newdawn.slick.Image;
 import org.newdawn.slick.gui.GUIContext;
-import org.newdawn.slick.gui.MouseOverArea;
 
 /**
  *
  * @author Kristof
  */
-public class Button extends MouseOverArea {
+public class Button extends MyMouseOverArea {
     
     public Button(GUIContext container, Image image, int x, int y) {
         super(container, image, x, y);
@@ -25,8 +25,9 @@ public class Button extends MouseOverArea {
     
     @Override
     public void mousePressed(int button, int mx, int my) {
+        super.mousePressed(button, mx, my);
         if (this.isMouseOver()) {
-            System.out.println("asfd");
+            Window.model.buttonAction();
         }
     }
     

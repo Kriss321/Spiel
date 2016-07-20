@@ -13,7 +13,7 @@ import gui.states.Menu;
 import input.MyKeyboard;
 import input.MyMouse;
 import main.Config;
-import main.MyObservable;
+import main.Model;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
@@ -33,7 +33,7 @@ public class Window extends StateBasedGame{
     
     public static StateBasedGame stateBasedGame;
     
-    private static MyObservable observable;
+    public static Model model;
 
     public Window() {
         super("First Test");
@@ -49,14 +49,14 @@ public class Window extends StateBasedGame{
         MyKeyboard.loadMyKeyboard(container);
         MyMouse.loadMyMouse(container);
         
-        Window.observable = new MyObservable(container);
+        Window.model = new Model(container);
         Menu menu = new Menu();
         Game game = new Game();
         InGameMenu inGameMenu = new InGameMenu();
         
-        Window.observable.addObserver(menu);
-        Window.observable.addObserver(game);
-        Window.observable.addObserver(inGameMenu);
+        Window.model.addObserver(menu);
+        Window.model.addObserver(game);
+        Window.model.addObserver(inGameMenu);
         
         this.addState(menu);
         this.addState(game);
@@ -68,11 +68,11 @@ public class Window extends StateBasedGame{
     public static void fullScreen(GameContainer container) {
         if (MyKeyboard.keyboard[Input.KEY_F11]) {
             MyKeyboard.keyboard[Input.KEY_F11] = false;
-            Window.observable.fullScreen(container);
+            Window.model.fullScreen(container);
         }
     }
     
     public static void setState(int state) {
-        Window.observable.setState(state);
+        Window.model.setState(state);
     }
 }
