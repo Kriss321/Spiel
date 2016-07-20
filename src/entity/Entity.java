@@ -39,4 +39,6 @@ public interface Entity {
     
     public int getHeigth();
     
+    public void debug(Graphics g);
+    
 }

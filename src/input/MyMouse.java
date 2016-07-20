@@ -5,8 +5,6 @@
  */
 package input;
 
-import gui.Window;
-import gui.states.Menu;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.MouseListener;
@@ -29,9 +27,6 @@ public class MyMouse implements MouseListener {
 
     @Override
     public void mouseClicked(int button, int x, int y, int clickCount) {
-        if(Window.state == 0){
-            Menu.mouseClicked();
-        }
         
     }
 

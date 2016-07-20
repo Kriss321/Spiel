@@ -7,11 +7,9 @@ package gui;
 
 import entity.Entity;
 import entity.EntityManager;
-import input.MyKeyboard;
 import map.MapManager;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
-import org.newdawn.slick.Input;
 
 /**
  *
@@ -22,65 +20,74 @@ public class Camera {
     public static int mapPosX = 0;
     public static int mapPosY = 0;
     
-    private static int playerCount;
+    private static float scaleX = 1;
+    private static float scaleY = 1;
     
-    public Camera() {
-        playerCount = EntityManager.entitys.length;
+    public static void setScale(Graphics g) {
+        g.scale(scaleX, scaleY);
+        //g.setAntiAlias(true);
     }
     
-    public void renderMap(MapManager mapManager, Graphics g) {
-        mapManager.renderMap(mapPosX, mapPosY, 0);
-        if (MyKeyboard.keyboard[Input.KEY_F3]) {
-            g.drawString("Map: " + mapPosX + " - " + mapPosY, 100, 10);
+    public static void removeScale(Graphics g) {
+        g.scale(1/scaleX , 1/scaleY);
+    }
+    
+    public static void renderMap(Graphics g) {
+        MapManager.renderMap(mapPosX, mapPosY, 0);
+    }
+    
+    public static void renderEntity(Graphics g) {
+        EntityManager.drawEntitys(g);
+    }
+    
+    public static void calcScale(GameContainer container) {
+        scaleX = container.getWidth()/((float)MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth());
+        scaleY = container.getHeight()/((float)MapManager.map.getMap().getHeight()* MapManager.map.getMap().getTileHeight());
+
+        scaleX = Math.round(1000 * scaleX) / 1000f;
+        scaleY = Math.round(1000 * scaleY) / 1000f;
+
+        if (scaleX < 1 && scaleY < 1) {
+            scaleX = 1;
+            scaleY = 1;
+        } else if (scaleX >= scaleY) {
+            scaleY = scaleX;
+        } else if (scaleX < scaleY) {
+            scaleX = scaleY;
         }
     }
     
-    public void calcPos(GameContainer container) {
-        if (playerCount == 1) {
-            if (EntityManager.entitys[0].getPosX() < (container.getWidth() / 2)) {
-                mapPosX = 0;
-            } else if (EntityManager.entitys[0].getPosX() > (MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth() - container.getWidth() / 2)) {
-                mapPosX = (MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth() - container.getWidth()) * -1;
-            } else {
-                mapPosX = Math.round((-EntityManager.entitys[0].getPosX() + (container.getWidth() / 2)));
-            }
+    public static void calcMapPos(GameContainer container) {
+        float maxX = 0;
+        float minX = MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth();
+        float maxY = 0;
+        float minY = MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight();
+        for (Entity entity : EntityManager.entitys) {
+            maxX = Math.max(maxX, entity.getPosX() + entity.getWidth());
+            minX = Math.min(minX, entity.getPosX());
+            maxY = Math.max(maxY, entity.getPosY() + entity.getHeigth());
+            minY = Math.min(minY, entity.getPosY());
+        }
+        float x = (maxX + minX) / 2;
+        float y = (maxY + minY) / 2;
 
-            if (EntityManager.entitys[0].getPosY() < (container.getHeight() / 2)) {
-                mapPosY = 0;
-            } else if (EntityManager.entitys[0].getPosY() > (MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight() - container.getHeight() / 2)) {
-                mapPosY = (MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight() - container.getHeight()) * -1;
-            } else {
-                mapPosY = Math.round((-EntityManager.entitys[0].getPosY() + (container.getHeight() / 2)));
-            }
+        if (x * scaleX < (container.getWidth() / 2)) {
+            mapPosX = 0;
+        } else if (x * scaleX > (MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth() * scaleX - container.getWidth() / 2)) {
+            mapPosX = (int) (MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth() * scaleX - container.getWidth()) * -1;
         } else {
-            float maxX = 0;
-            float minX = MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth();
-            float maxY = 0;
-            float minY = MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight();
-            for (Entity entity : EntityManager.entitys) {
-                maxX = Math.max(maxX, entity.getPosX()+entity.getWidth());
-                minX = Math.min(minX, entity.getPosX());
-                maxY = Math.max(maxY, entity.getPosY()+entity.getHeigth());
-                minY = Math.min(minY, entity.getPosY());
-            }
-            float x = (maxX + minX) / 2;
-            float y = (maxY + minY) / 2;
-            
-            if (x < (container.getWidth() / 2)) {
-                mapPosX = 0;
-            } else if (x > (MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth() - container.getWidth() / 2)) {
-                mapPosX = (MapManager.map.getMap().getWidth() * MapManager.map.getMap().getTileWidth() - container.getWidth()) * -1;
-            } else {
-                mapPosX = Math.round((-x + (container.getWidth() / 2)));
-            }
-
-            if (y < (container.getHeight() / 2)) {
-                mapPosY = 0;
-            } else if (y > (MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight() - container.getHeight() / 2)) {
-                mapPosY = (MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight() - container.getHeight()) * -1;
-            } else {
-                mapPosY = Math.round((-y + (container.getHeight() / 2)));
-            }
+            mapPosX = Math.round((-x * scaleX + (container.getWidth() / 2)));
         }
+        mapPosX = Math.round(mapPosX / scaleX);
+
+        if (y < (container.getHeight() / 2)) {
+            mapPosY = 0;
+        } else if (y > (MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight() * scaleY - container.getHeight() / 2)) {
+            mapPosY = (int) (MapManager.map.getMap().getHeight() * MapManager.map.getMap().getTileHeight() * scaleY - container.getHeight()) * -1;
+        } else {
+            mapPosY = Math.round((-y + (container.getHeight() / 2)));
+        }
+        mapPosY = Math.round(mapPosY / scaleY);
     }
+    
 }

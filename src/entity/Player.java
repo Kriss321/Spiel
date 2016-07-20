@@ -14,7 +14,6 @@ import map.Map;
 import map.MapManager;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
-import org.newdawn.slick.Input;
 
 /**
  *
@@ -67,15 +66,6 @@ public class Player implements Entity {
     
     public void drawEntity(Graphics g) {
         this.image.draw(this.posX + Camera.mapPosX, this.posY + Camera.mapPosY);
-        
-        if (MyKeyboard.keyboard[Input.KEY_F3]) {
-            g.drawString("Player " + id + ":", 10+(id*400), 25);
-            g.drawString("velX: " + String.valueOf(this.velX) + ", valY: " + String.valueOf(this.velY), 10+(id*400), 40);
-            g.drawString("PosX: " + this.posX + " | PosY: " + this.posY, 10+(id*400), 55);
-        }
-        //g.drawLine(this.posX, this.posY-1, this.posX + width, this.posY-1);
-        //g.drawLine(this.posX-1, this.posY, this.posX-1, this.posY + height);
-        //g.drawLine(this.posX+width-1, this.posY+1, this.posX+width-1, this.posY + height-2);
     }
     
     public void move(int delta) {
@@ -100,13 +90,16 @@ public class Player implements Entity {
 
         if (MapManager.collisionMap(this.posX + width + this.velX * delta, this.posY) || MapManager.collisionMap(this.posX + this.width + this.velX * delta, this.posY + this.height - 1)) {
             if (this.posX % this.map.getMap().getTileWidth() != 0) {
-                System.out.println("Right old: " + this.posX);
-                this.posX = this.posX + width - this.posX % 32;
-                System.out.println("Right new: " + this.posX);
+                //System.out.println("Right old: " + this.posX);
+                this.posX = this.posX + this.tileWidth - this.posX % this.tileWidth;
+                //System.out.println("Right new: " + this.posX);
             }
             this.velX = 0;
         } else if (collisionEntity(this.posX + width + this.velX * delta, this.posY + 1) || collisionEntity(this.posX + this.width + this.velX * delta, this.posY + this.height - 1)) {
             this.posX = this.collidedEntity.getPosX() - this.width;
+            this.velX = 0;
+        } else if (this.posX + Camera.mapPosX + width + this.velX * delta >= Game.container.getWidth()) {
+            this.posX = Game.container.getWidth() - this.width - Camera.mapPosX;
             this.velX = 0;
         }
     }
@@ -122,13 +115,16 @@ public class Player implements Entity {
 
         if (MapManager.collisionMap(this.posX + this.velX * delta, this.posY) || MapManager.collisionMap(this.posX + this.velX * delta, this.posY + this.height - 1)) {
             if (this.posX % this.map.getMap().getTileWidth() != 0) {
-                System.out.println("Left old: " + this.posX);
-                this.posX = this.posX - this.posX % 32;
-                System.out.println("Left new: " + this.posX);
+                //System.out.println("Left old: " + this.posX);
+                this.posX = this.posX - this.posX % this.tileWidth;
+                //System.out.println("Left new: " + this.posX);
             }
             this.velX = 0;
         } else if (collisionEntity(this.posX + this.velX * delta, this.posY + 1) || collisionEntity(this.posX + this.velX * delta, this.posY + this.height - 1)) {
             this.posX = this.collidedEntity.getPosX() + this.collidedEntity.getWidth();
+            this.velX = 0;
+        } else if (this.posX + Camera.mapPosX + this.velX * delta <= 0) {
+            this.posX = -Camera.mapPosX;
             this.velX = 0;
         }
 
@@ -156,9 +152,9 @@ public class Player implements Entity {
 
         if (MapManager.collisionMap(this.posX, this.posY + this.velY * delta) || MapManager.collisionMap(this.posX + this.width - 0.01f, this.posY + this.velY * delta)) {
             if (this.posY % this.map.getMap().getTileHeight() != 0) {
-                System.out.println("Top old: " + this.posY);
-                this.posY = (float)(Math.ceil(this.posY - this.posY % 32));
-                System.out.println("Top new: " + this.posY);
+                //System.out.println("Top old: " + this.posY);
+                this.posY = (float)(Math.ceil(this.posY - this.posY % this.tileHeight));
+                //System.out.println("Top new: " + this.posY);
             }
             this.jump = false;
             this.velY = 0;
@@ -181,8 +177,9 @@ public class Player implements Entity {
         
         if (MapManager.collisionMap(this.posX, this.posY + this.height + this.velY * delta) || MapManager.collisionMap(this.posX + this.width - 1, this.posY + this.height + this.velY * delta)) {
             if (this.posY % this.map.getMap().getTileHeight() != 0) {
-                this.posY = this.posY + height - this.posY % 32;
-                System.out.println("------------------>" + this.posY);
+                //System.out.println("old: " + this.posY);
+                this.posY = this.posY + this.tileHeight - this.posY % this.tileHeight;
+                //System.out.println("------------------>" + this.posY);
                 
             }
             this.jumpCount = 0;
@@ -205,18 +202,6 @@ public class Player implements Entity {
             }
         }
     }
-    
-    /*
-    public boolean collisionWorld(float x, float y) {
-        if (x >= 0 && x <= (this.map.getMap().getWidth() * this.tileWidth) && y >= 0 && y <= (this.map.getMap().getHeight() * this.tileHeight)) {
-            if (this.map.getMap().getTileId((int) (x / this.tileWidth), (int) (y / this.tileWidth), this.map.getMap().getLayerIndex("Solid")) != 0) {
-                return true;
-            }
-        }
-
-        return false;
-    }
-    */
     
     public boolean collisionEntity(float x, float y) {
         for (Entity entity : EntityManager.entitys) {
@@ -254,6 +239,12 @@ public class Player implements Entity {
     
     public int getHeigth() {
         return this.height;
+    }
+    
+    public void debug(Graphics g) {
+        g.drawString("Player " + id + ":", 10+(id*400), 25);
+        g.drawString("velX: " + String.valueOf(this.velX) + ", valY: " + String.valueOf(this.velY), 10+(id*400), 40);
+        g.drawString("PosX: " + this.posX + " | PosY: " + this.posY, 10+(id*400), 55);
     }
     
 }

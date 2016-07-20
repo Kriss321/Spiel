@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE map SYSTEM "http://mapeditor.org/dtd/1.0/map.dtd">
+<map version="1.0" orientation="orthogonal" renderorder="right-down" width="80" height="45" tilewidth="8" tileheight="8" nextobjectid="1">
+ <tileset firstgid="1" name="tileset" tilewidth="8" tileheight="8" tilecount="1600" columns="40">
+  <image source="../Teils/tileset.png" width="320" height="320"/>
+ </tileset>
+ <layer name="Solid" width="80" height="45">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3WOQpCQRRE0e/sVpzdirNbcXbpViaYdSCNeA7coIKGDl/TAAAAAAAAAAAAAFBDK7VTJ3Ur/+UbxmlS+xM/bJ02Fd7+u1M6p0u6Vv7LN/RSPw3S0C7eszRPi7S0i/cu7dMhHe3ifUv39EhPu3h/3l122R4179tuahfvVfO+z7Z28f68z+yy/QLb2JGwQDgAAA==
+  </data>
+ </layer>
+ <layer name="Startpoints" width="80" height="45">
+  <data encoding="base64" compression="gzip">
+   H4sIAAAAAAAAA+3NMQ0AAAgDsF14wL9RRPCQ0BpoAgAAAAAAAAAAAGx1/bwBAACAuwYKVYppQDgAAA==
+  </data>
+ </layer>
+</map>

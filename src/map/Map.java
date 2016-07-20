@@ -8,6 +8,7 @@ package map;
 import main.Resources;
 import java.util.HashMap;
 import org.newdawn.slick.SlickException;
+import org.newdawn.slick.tiled.TileSet;
 import org.newdawn.slick.tiled.TiledMap;
 
 /**
@@ -31,9 +32,10 @@ public class Map {
     public void findStartPoints(){
         startPoints = new HashMap();
         int player = 0;
+        int startset = ((map.getTileSet(0).tilesDown - 1) * map.getTileSet(0).tilesAcross) + 1;
         for (int x = 0; x < map.getWidth(); x++) {
             for (int y = 0; y < map.getHeight(); y++) {
-                if(map.getTileId(x, y, 1) == 91){
+                if(map.getTileId(x, y, 1) == startset){
                     float[] point = {x, y};
                     startPoints.put(player, point);
                     player++;
