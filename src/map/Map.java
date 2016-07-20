@@ -26,8 +26,6 @@ public class Map {
         map = Resources.loadMap(name);
         setGravity();
         findStartPoints();
-        startPoints.size();
-        System.out.println(map.getWidth());
     }
     
     public void findStartPoints(){
@@ -64,11 +62,15 @@ public class Map {
         return startPoints.get(id);
     }
     
-    public String getStartPoitCount() {
-        return String.valueOf(startPoints.size());
+    public int getStartPoitCount() {
+        return startPoints.size();
     }
     
-    public float setGravity(){
-        return gravity = Float.parseFloat(map.getMapProperty("Gravity", "9.81"));
+    public float getGravity(){
+        return gravity;
+    }
+    
+    public void setGravity(){
+        gravity = Float.parseFloat(map.getMapProperty("Gravity", "9.81"));
     }
 }

@@ -48,7 +48,7 @@ public class Player implements Entity {
     public Player(Map map, int id) {
         this.map = map;
         this.id = id;
-        this.gravity = map.setGravity();
+        this.gravity = map.getGravity();
         this.tileHeight = map.getMap().getTileHeight();
         this.tileWidth = map.getMap().getTileWidth();
         this.startPoint = map.getStartPoit(id);
