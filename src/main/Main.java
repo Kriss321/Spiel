@@ -5,7 +5,7 @@
  */
 package main;
 
-import gui.Window;
+import gui.BasedGame;
 import org.newdawn.slick.AppGameContainer;
 import org.newdawn.slick.SlickException;
 
@@ -16,6 +16,7 @@ import org.newdawn.slick.SlickException;
 public class Main {
     
     public static AppGameContainer container;
+    public static BasedGame basedGame;
     
     /**
      * Entry point to our test
@@ -24,7 +25,7 @@ public class Main {
      */
     public static void main(String[] argv) {
         try {
-            container = new AppGameContainer(new Window());
+            container = new AppGameContainer(basedGame = new BasedGame());
             container.setDisplayMode(1280, 768, false);
             container.start();
         } catch (SlickException e) {

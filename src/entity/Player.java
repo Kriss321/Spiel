@@ -6,8 +6,8 @@
 package entity;
 
 import gui.Camera;
-import gui.states.Game;
 import input.MyKeyboard;
+import main.Main;
 import main.Config;
 import main.Resources;
 import map.Map;
@@ -42,12 +42,12 @@ public class Player implements Entity {
     
     private float delta = 0;
     private int count = 0;
-    
-    
+
     public Player(Map map, int id) {
         this.map = map;
         this.id = id;
         this.gravity = map.getGravity();
+        this.down_speed = this.gravity / 30;
         this.tileHeight = map.getMap().getTileHeight();
         this.tileWidth = map.getMap().getTileWidth();
         this.startPoint = map.getStartPoit(id);
@@ -61,7 +61,6 @@ public class Player implements Entity {
         this.keyJump = Config.getInt("p" + id + ".move.jump");
 
         this.collidedEntity = null;
-        
     }
     
     public void drawEntity(Graphics g) {
@@ -69,10 +68,11 @@ public class Player implements Entity {
     }
     
     public void move(int delta) {
-        delta(delta);
+        //delta(delta);
         moveRight(delta);
         moveLeft(delta);
         slowDown(delta);
+        
         this.posX += this.velX * delta;
         gravity(delta);
         Jump(delta);
@@ -80,15 +80,15 @@ public class Player implements Entity {
     }
     
     public void moveRight(int delta) {
-        if (MyKeyboard.keyboard[this.keyRight] && !MyKeyboard.keyboard[this.keyLeft] && !(MapManager.collisionMap(this.posX + this.width, this.posY) || MapManager.collisionMap(this.posX + this.width, this.posY + this.height - 1))) {
-            if (this.velX < 0.25f) {
-                this.velX += 0.01f;
+        if (MyKeyboard.keyboard[this.keyRight] && !MyKeyboard.keyboard[this.keyLeft] && !MapManager.collisionMap(this.posX + this.width, this.posY, 0, this.height - 1)) {
+            if (this.velX < 0.24f) {
+                this.velX += 0.00055f * delta;
             } else {
                 this.velX = 0.25f;
             }
         }
 
-        if (MapManager.collisionMap(this.posX + width + this.velX * delta, this.posY) || MapManager.collisionMap(this.posX + this.width + this.velX * delta, this.posY + this.height - 1)) {
+        if (MapManager.collisionMap(this.posX + this.width + this.velX * delta, this.posY, 0, this.height - 1)) {
             if (this.posX % this.map.getMap().getTileWidth() != 0) {
                 //System.out.println("Right old: " + this.posX);
                 this.posX = this.posX + this.tileWidth - this.posX % this.tileWidth;
@@ -98,22 +98,22 @@ public class Player implements Entity {
         } else if (collisionEntity(this.posX + width + this.velX * delta, this.posY + 1) || collisionEntity(this.posX + this.width + this.velX * delta, this.posY + this.height - 1)) {
             this.posX = this.collidedEntity.getPosX() - this.width;
             this.velX = 0;
-        } else if (this.posX + Camera.mapPosX + width + this.velX * delta >= Game.container.getWidth()) {
-            this.posX = Game.container.getWidth() - this.width - Camera.mapPosX;
+        } else if (this.posX + Camera.mapPosX + width + this.velX * delta >= (Main.container.getWidth()/Camera.getScale())) {
+            this.posX = (Main.container.getWidth()/Camera.getScale()) - this.width - Camera.mapPosX;
             this.velX = 0;
         }
     }
 
     public void moveLeft(int delta) {
-        if (MyKeyboard.keyboard[this.keyLeft] && !MyKeyboard.keyboard[this.keyRight] && !(MapManager.collisionMap(this.posX - 1, this.posY) || MapManager.collisionMap(this.posX - 1, this.posY + this.height - 1))) {
-            if (this.velX > -0.25f) {
-                this.velX -= 0.01f;
+        if (MyKeyboard.keyboard[this.keyLeft] && !MyKeyboard.keyboard[this.keyRight] && !MapManager.collisionMap(this.posX - 1, this.posY, 0, this.height - 1)) {
+            if (this.velX > -0.24f) {
+                this.velX -= 0.00055f * delta;
             } else {
                 this.velX = -0.25f;
             }
         }
 
-        if (MapManager.collisionMap(this.posX + this.velX * delta, this.posY) || MapManager.collisionMap(this.posX + this.velX * delta, this.posY + this.height - 1)) {
+        if (MapManager.collisionMap(this.posX + this.velX * delta, this.posY, 0, this.height - 1)) {
             if (this.posX % this.map.getMap().getTileWidth() != 0) {
                 //System.out.println("Left old: " + this.posX);
                 this.posX = this.posX - this.posX % this.tileWidth;
@@ -150,7 +150,7 @@ public class Player implements Entity {
             this.jump = false;
         }
 
-        if (MapManager.collisionMap(this.posX, this.posY + this.velY * delta) || MapManager.collisionMap(this.posX + this.width - 0.01f, this.posY + this.velY * delta)) {
+        if (MapManager.collisionMap(this.posX, this.posY + this.velY * delta, this.width - 0.01f, 0)) {
             if (this.posY % this.map.getMap().getTileHeight() != 0) {
                 //System.out.println("Top old: " + this.posY);
                 this.posY = (float)(Math.ceil(this.posY - this.posY % this.tileHeight));
@@ -166,21 +166,34 @@ public class Player implements Entity {
     }
     
     public void gravity(int delta) {
-        if (!MapManager.collisionMap(this.posX, this.posY + this.height) && !MapManager.collisionMap(this.posX + this.width - 0.01f, this.posY + this.height)) {
+        
+        if (!MapManager.collisionMap(this.posX, this.posY + this.height, this.width - 0.01f, 0)) {
             if (this.velY < this.down_speed) {
-                this.velY += 0.02f;
+                this.velY += 0.00125f * delta;
             }
             if (this.velY >= this.down_speed) {
                 this.velY = this.down_speed;
             }
         }
         
-        if (MapManager.collisionMap(this.posX, this.posY + this.height + this.velY * delta) || MapManager.collisionMap(this.posX + this.width - 1, this.posY + this.height + this.velY * delta)) {
+        if (this.velY * delta >= this.tileHeight) {
+            int faktor = 1;
+            while ((this.velY/faktor) * delta >= this.tileHeight ) {
+                faktor++;
+            }
+            for (int i = 1; i <= faktor; i++) {
+                if (MapManager.collisionMap(this.posX, this.posY + this.height + (this.velY / faktor * i) * delta, this.width - 0.01f, 0)) {
+                    if (this.posY % this.map.getMap().getTileHeight() != 0) {
+                        this.posY = this.posY + this.tileHeight - this.posY % this.tileHeight;
+                    }
+                    this.jumpCount = 0;
+                    this.velY = 0;
+                    break;
+                }
+            }
+        } else if (MapManager.collisionMap(this.posX, this.posY + this.height + this.velY * delta, this.width - 0.01f, 0)) {
             if (this.posY % this.map.getMap().getTileHeight() != 0) {
-                //System.out.println("old: " + this.posY);
                 this.posY = this.posY + this.tileHeight - this.posY % this.tileHeight;
-                //System.out.println("------------------>" + this.posY);
-                
             }
             this.jumpCount = 0;
             this.velY = 0;
@@ -188,15 +201,14 @@ public class Player implements Entity {
             this.posY = this.collidedEntity.getPosY() - this.height;
             this.velY = 0;
         }
-
     }
     
     public void slowDown(int delta) {
         if (!(MyKeyboard.keyboard[this.keyLeft] ^ MyKeyboard.keyboard[this.keyRight])) {
             if (this.velX > 0.01f) {
-                this.velX -= 0.02f;
+                this.velX -= 0.00125f * delta;
             } else if (this.velX < -0.01f) {
-                this.velX += 0.02f;
+                this.velX += 0.00125f * delta;
             } else {
                 this.velX = 0;
             }
@@ -222,6 +234,7 @@ public class Player implements Entity {
             this.delta += delta;
             this.count++;
             this.down_speed = this.gravity / (this.delta / this.count);
+            System.out.println(this.down_speed);
         }
     }
     

@@ -5,8 +5,6 @@
  */
 package input;
 
-import gui.Window;
-import gui.states.Menu;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Input;
 import org.newdawn.slick.MouseListener;

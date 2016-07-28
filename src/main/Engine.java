@@ -14,11 +14,11 @@ import org.newdawn.slick.GameContainer;
 public class Engine {
     
     public static void loadEngine(GameContainer container){
-        //container.setAlwaysRender(true);
-        container.setMinimumLogicUpdateInterval(16);
+        container.setAlwaysRender(true);
         container.setVSync(true);
+        container.setVerbose(true);
         container.setShowFPS(false);
-        //container.setMultiSample(8);
+        container.setMultiSample(8);
     }
     
 }
