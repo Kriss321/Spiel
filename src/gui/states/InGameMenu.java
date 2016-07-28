@@ -6,11 +6,13 @@
 package gui.states;
 
 import gui.Camera;
-import gui.Window;
+import gui.BasedGame;
+import gui.states.models.Model;
+import gui.states.models.ModelInGameMenu;
+import input.Button;
 import input.MyKeyboard;
 import java.util.Observable;
 import java.util.Observer;
-import main.Resources;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
 import org.newdawn.slick.Image;
@@ -25,66 +27,67 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class InGameMenu extends BasicGameState implements Observer {
     
-    private static int leftSidePause;
-    private static int topSidePause;
+    private final Model model;
+    private final ModelInGameMenu modelInGameMenu;
+    
+    private int leftSidePauseCord;
+    private int topSidePauseCord;
     
     private Image overlay;
-    private static Image pause;
+    private Image pause;
+    
+    private Button menu;
+
+    public InGameMenu(Model model, ModelInGameMenu modelInGameMenu) {
+        this.model = model;
+        this.modelInGameMenu = modelInGameMenu;
+    }
 
     @Override
     public int getID() {
-        return Window.ID_INGAMEMENU;
+        return BasedGame.ID_INGAMEMENU;
     }
 
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
-        overlay = Resources.getImage("mapOverlay");
-        pause = Resources.getImage("Pause");
-        leftSidePause = (container.getWidth() - pause.getWidth()) / 2;
-        topSidePause = 75;
+        update(modelInGameMenu, modelInGameMenu);
         System.out.println("InitInGameMenu: " + (System.currentTimeMillis() - time) + " ms");
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-        g.drawImage(Game.getBackground(), 0, 0);
+        g.drawImage(BasedGame.modelGame.getBackground(), 0, 0);
         Camera.setScale(g);
         Camera.renderMap(g);
         Camera.renderEntity(g);
         Camera.removeScale(g);
         g.drawImage(overlay, 0, 0);
-        g.drawImage(pause, leftSidePause, topSidePause);
+        g.drawImage(pause, leftSidePauseCord, topSidePauseCord);
+        menu.render(container, g);
     }
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
         changeState();
-        Window.fullScreen(container);
+        this.model.fullScreen(container);
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        if(arg instanceof Object[]) {
-            Object[] argument = (Object[])arg;
-            if (argument[0] instanceof String) {
-                String s = (String)argument[0];
-                if (s.equalsIgnoreCase("fullscreen") && argument[1] instanceof GameContainer) {
-                    GameContainer container = (GameContainer)argument[1];
-                    leftSidePause = (container.getWidth() - pause.getWidth()) / 2;
-                    //topSidePause = (container.getHeight()- pause.getHeight()) / 2;
-                }
-                
-            }
-            
+        if(arg instanceof ModelInGameMenu) {
+            leftSidePauseCord = modelInGameMenu.getLeftSidePauseCord();
+            topSidePauseCord = modelInGameMenu.getTopSidePauseCord();
+            overlay = modelInGameMenu.getOverlay();
+            pause = modelInGameMenu.getPause();
+            menu = modelInGameMenu.getMenu();
         }
     }
-    
-    private void changeState() {
+
+    public void changeState() {
         if (MyKeyboard.keyboard[Input.KEY_ESCAPE]) {
             MyKeyboard.keyboard[Input.KEY_ESCAPE] = false;
-            Window.setState(Window.ID_GAME);
+            model.setState(BasedGame.ID_GAME);
         }
     }
-    
 }

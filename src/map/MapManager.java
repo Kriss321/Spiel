@@ -40,7 +40,20 @@ public class MapManager {
         map.renderMap(x, y, layer);
     }
     
-    public static boolean collisionMap(float x, float y) {
+    public static boolean collisionMap(float xCord, float yCord, float widht, float height) {
+        float x;
+        float y;
+        for (x = xCord; x <= xCord + widht; x += map.getMap().getTileWidth()) {
+            for (y = yCord; y <= yCord + height; y += map.getMap().getTileHeight()) {
+                if (x >= 0 && x <= (map.getMap().getWidth() * map.getMap().getTileWidth()) && y >= 0 && y <= (map.getMap().getHeight() * map.getMap().getTileHeight())) {
+                    if (map.getMap().getTileId((int) (x / map.getMap().getTileWidth()), (int) (y / map.getMap().getTileHeight()), map.getMap().getLayerIndex("Solid")) != 0) {
+                        return true;
+                    }
+                }
+            }
+        }
+        x = xCord + widht;
+        y = yCord + height;
         if (x >= 0 && x <= (map.getMap().getWidth() * map.getMap().getTileWidth()) && y >= 0 && y <= (map.getMap().getHeight() * map.getMap().getTileHeight())) {
             if (map.getMap().getTileId((int) (x / map.getMap().getTileWidth()), (int) (y / map.getMap().getTileHeight()), map.getMap().getLayerIndex("Solid")) != 0) {
                 return true;

@@ -7,8 +7,9 @@ package gui.states;
 
 import entity.EntityManager;
 import gui.Camera;
-import gui.Window;
-import main.Resources;
+import gui.BasedGame;
+import gui.states.models.Model;
+import gui.states.models.ModelGame;
 import input.MyKeyboard;
 import java.util.Observable;
 import java.util.Observer;
@@ -27,26 +28,31 @@ import org.newdawn.slick.state.StateBasedGame;
  */
 public class Game extends BasicGameState implements Observer {
     
-    public static GameContainer container;
+    private final Model model;
+    private final ModelGame modelGame;
     
-    private static Image background;
+    private Image background;
+
+    public Game(Model model, ModelGame modelGame) {
+        this.model = model;
+        this.modelGame = modelGame;
+    }
 
     @Override
     public int getID() {
-        return Window.ID_GAME;
+        return BasedGame.ID_GAME;
     }
 
     @Override
     public void init(GameContainer container, StateBasedGame game) throws SlickException {
         long time = System.currentTimeMillis();
-        Game.background = Resources.getImage("Game");
-        Game.container = container;
+        update(this.modelGame, this.modelGame);
         System.out.println("InitGame: " + (System.currentTimeMillis() - time) + " ms");
     }
 
     @Override
     public void render(GameContainer container, StateBasedGame game, Graphics g) throws SlickException {
-        g.drawImage(background, 0, 0);
+        g.drawImage(this.background, 0, 0);
         Camera.setScale(g);
         Camera.renderMap(g);
         Camera.renderEntity(g);
@@ -56,39 +62,24 @@ public class Game extends BasicGameState implements Observer {
 
     @Override
     public void update(GameContainer container, StateBasedGame game, int delta) throws SlickException {
-        EntityManager.moveEntitys(delta);
         Camera.calcMapPos(container);
-        Window.fullScreen(container);
+        EntityManager.moveEntitys(delta);
+        this.model.fullScreen(container);
         changeState();
+        this.model.fps();
     }
 
     @Override
     public void update(Observable o, Object arg) {
-        if(arg instanceof Object[]) {
-            Object[] argument = (Object[])arg;
-            if (argument[0] instanceof String) {
-                String s = (String)argument[0];
-                if (s.equalsIgnoreCase("fullscreen") && argument[1] instanceof GameContainer) {
-                    GameContainer container = (GameContainer)argument[1];
-                    if (Window.state == 1) {
-                        Camera.calcScale(container);
-                    }
-                } else if (s.equalsIgnoreCase("changeState") && argument[1] instanceof Integer) {
-                    int state = (int)argument[1];
-                    if (Window.state == state) {
-                        Camera.calcScale(container);
-                    }
-                }
-                
-            }
-            
+        if(arg instanceof ModelGame) {
+            this.background = this.modelGame.getBackground();
         }
     }
 
     public static void loadMap(String name){
         MapManager.loadMap(name);
     }
-    
+
     private void debug(GameContainer container, Graphics g){
         if (MyKeyboard.keyboard[Input.KEY_F3]) {
             g.drawString("FPS: " + container.getFPS(), 10, 10);
@@ -96,16 +87,12 @@ public class Game extends BasicGameState implements Observer {
             EntityManager.debug(g);
         }
     }
-    
+
     private void changeState() {
         if (MyKeyboard.keyboard[Input.KEY_ESCAPE]) {
             MyKeyboard.keyboard[Input.KEY_ESCAPE] = false;
-            Window.setState(Window.ID_INGAMEMENU);
+            this.model.setState(BasedGame.ID_INGAMEMENU);
         }
-    }
-    
-    public static Image getBackground() {
-        return Game.background;
     }
 
 }

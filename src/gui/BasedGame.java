@@ -13,9 +13,8 @@ import gui.states.Menu;
 import input.MyKeyboard;
 import input.MyMouse;
 import main.Config;
-import main.Model;
+import gui.states.models.*;
 import org.newdawn.slick.GameContainer;
-import org.newdawn.slick.Input;
 import org.newdawn.slick.SlickException;
 import org.newdawn.slick.state.StateBasedGame;
 
@@ -23,21 +22,20 @@ import org.newdawn.slick.state.StateBasedGame;
  *
  * @author Kristof
  */
-public class Window extends StateBasedGame{
+public class BasedGame extends StateBasedGame {
     
     public static int state = 0;
     public final static int ID_MENU = 0x00;
     public final static int ID_GAME = 0x01;
     public final static int ID_INGAMEMENU = 0x02;
     
-    
-    public static StateBasedGame stateBasedGame;
-    
     public static Model model;
+    public static ModelMenu modelMenu;
+    public static ModelGame modelGame;
+    public static ModelInGameMenu modelInGameMenu;
 
-    public Window() {
+    public BasedGame() {
         super("First Test");
-        stateBasedGame = this;
     }
 
     @Override
@@ -49,14 +47,22 @@ public class Window extends StateBasedGame{
         MyKeyboard.loadMyKeyboard(container);
         MyMouse.loadMyMouse(container);
         
-        Window.model = new Model(container);
-        Menu menu = new Menu();
-        Game game = new Game();
-        InGameMenu inGameMenu = new InGameMenu();
+        BasedGame.model = new Model(container);
+        BasedGame.modelMenu = new ModelMenu(container, BasedGame.model);
+        BasedGame.modelGame = new ModelGame(container, BasedGame.model);
+        BasedGame.modelInGameMenu = new ModelInGameMenu(container, BasedGame.model);
         
-        Window.model.addObserver(menu);
-        Window.model.addObserver(game);
-        Window.model.addObserver(inGameMenu);
+        BasedGame.model.setModelMenu(modelMenu);
+        BasedGame.model.setModelGame(modelGame);
+        BasedGame.model.setModelInGameMenu(modelInGameMenu);
+        
+        Menu menu = new Menu(model, modelMenu);
+        Game game = new Game(model, modelGame);
+        InGameMenu inGameMenu = new InGameMenu(model, modelInGameMenu);
+        
+        BasedGame.modelMenu.addObserver(menu);
+        BasedGame.modelGame.addObserver(game);
+        BasedGame.modelInGameMenu.addObserver(inGameMenu);
         
         this.addState(menu);
         this.addState(game);
@@ -64,15 +70,5 @@ public class Window extends StateBasedGame{
 
         System.out.println("Game: " + (System.currentTimeMillis() - time) + " ms");
     }
-    
-    public static void fullScreen(GameContainer container) {
-        if (MyKeyboard.keyboard[Input.KEY_F11]) {
-            MyKeyboard.keyboard[Input.KEY_F11] = false;
-            Window.model.fullScreen(container);
-        }
-    }
-    
-    public static void setState(int state) {
-        Window.model.setState(state);
-    }
+
 }

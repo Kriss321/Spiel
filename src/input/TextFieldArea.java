@@ -5,7 +5,7 @@
  */
 package input;
 
-import gui.Window;
+import gui.BasedGame;
 import org.newdawn.slick.Color;
 import org.newdawn.slick.Font;
 import org.newdawn.slick.Graphics;
@@ -32,6 +32,9 @@ public class TextFieldArea extends MyMouseOverArea {
     /** The default font to use in the graphics context */
     private Font font = container.getDefaultFont();
     
+    /** The function of the TextFieldArea */
+    protected String function = "";
+    
     /** The text to write */
     protected String text = "";
     
@@ -56,20 +59,21 @@ public class TextFieldArea extends MyMouseOverArea {
     /** The colour used in mouseDown state */
     private Color mouseDownColorSelected = Color.green;
 
-    public TextFieldArea(GUIContext container, int x, int y, Font font, String text) {
-        this(container, x, y, font.getWidth(text), font.getHeight(text));
+    public TextFieldArea(GUIContext container, int x, int y, Font font, String text, String function) {
+        this(container, x, y, font.getWidth(text), font.getHeight(text), function);
         this.font = font;
         this.text = text;
     }
     
-    public TextFieldArea(GUIContext container, int x, int y, int width, Font font, String text) {
-        this(container, x, y, width, font.getHeight(text));
+    public TextFieldArea(GUIContext container, int x, int y, int width, Font font, String text, String function) {
+        this(container, x, y, width, font.getHeight(text), function);
         this.font = font;
         this.text = text;
     }
     
-    public TextFieldArea(GUIContext container, int x, int y, int width, int height) {
+    public TextFieldArea(GUIContext container, int x, int y, int width, int height, String function) {
         super(container, null, x, y, width, height);
+        this.function = function;
         //mouseOverColor = Color.blue;
     }
 
@@ -145,8 +149,17 @@ public class TextFieldArea extends MyMouseOverArea {
     public void mousePressed(int button, int mx, int my) {
         super.mousePressed(button, mx, my);
         if (this.isMouseOver()) {
-            this.selected = !this.selected;
-            Window.model.textFieldAreaAction(this, text);
+            if(BasedGame.state == BasedGame.ID_MENU) {
+                this.selected = !this.selected;
+                switch (function) {
+                    case "playerSelect":
+                        BasedGame.modelMenu.playerSelected(Integer.parseInt(String.valueOf(text.charAt(0))) - 1);
+                        break;
+                    case "mapSelect":
+                        BasedGame.modelMenu.mapSelected(text);
+                        break;
+                }
+            }
         }
     }
 
