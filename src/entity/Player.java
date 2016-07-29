@@ -44,7 +44,7 @@ public class Player implements Entity {
         this.map = map;
         this.id = id;
         this.gravity = map.getGravity();
-        this.down_speed = this.gravity / 30;
+        this.down_speed = this.gravity / 20;
         this.tileHeight = map.getMap().getTileHeight();
         this.tileWidth = map.getMap().getTileWidth();
         this.startPoint = map.getStartPoit(id);
@@ -78,7 +78,11 @@ public class Player implements Entity {
     public void moveRight(int delta) {
         if (MyKeyboard.keyboard[this.keyRight] && !MyKeyboard.keyboard[this.keyLeft] && !MapManager.collisionMap(this.posX + this.width, this.posY, 0, this.height - 1)) {
             if (this.velX < 0.24f) {
-                this.velX += 0.00055f * delta;
+                if (this.velX < 0) {
+                    this.velX += 0.0009625f * delta;
+                } else {
+                    this.velX += 0.00055f * delta;
+                }
             } else {
                 this.velX = 0.25f;
             }
@@ -103,7 +107,11 @@ public class Player implements Entity {
     public void moveLeft(int delta) {
         if (MyKeyboard.keyboard[this.keyLeft] && !MyKeyboard.keyboard[this.keyRight] && !MapManager.collisionMap(this.posX - 1, this.posY, 0, this.height - 1)) {
             if (this.velX > -0.24f) {
-                this.velX -= 0.00055f * delta;
+                if (this.velX > 0) {
+                    this.velX -= 0.0009625f * delta;
+                } else {
+                    this.velX -= 0.00055f * delta;
+                }
             } else {
                 this.velX = -0.25f;
             }

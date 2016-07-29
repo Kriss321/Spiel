@@ -27,10 +27,10 @@ public class Button extends MyMouseOverArea {
         super(container, image, x, y, width, height);
         this.function = function;
     }
-    
+
     @Override
-    public void mousePressed(int button, int mx, int my) {
-        super.mousePressed(button, mx, my);
+    public void mouseReleased(int button, int mx, int my) {
+        super.mouseReleased(button, mx, my);
         if (this.isMouseOver()) {
             if(BasedGame.state == BasedGame.ID_MENU) {
                 switch(function) {
@@ -55,6 +55,12 @@ public class Button extends MyMouseOverArea {
                 }
             }
         }
+    }
+    
+    @Override
+    public void mousePressed(int button, int mx, int my) {
+        super.mousePressed(button, mx, my);
+        
     }
     
 }

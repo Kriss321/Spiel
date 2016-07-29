@@ -59,6 +59,8 @@ public class ModelInGameMenu extends Observable {
         leftSidePauseCord = (container.getWidth() - pause.getWidth()) / 2;
         //topSidePauseCord = (container.getHeight()- pause.getHeight()) / 2;
         this.menu.setX((container.getWidth() - this.menu.getWidth()) / 2);
+        this.reload.setX((container.getWidth() - this.reload.getWidth()) / 2);
+        this.exit.setX((container.getWidth() - this.exit.getWidth()) / 2);
         setChanged();
         notifyObservers(this);
     }

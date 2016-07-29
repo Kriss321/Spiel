@@ -7,7 +7,6 @@ package gui;
 
 import entity.Entity;
 import entity.EntityManager;
-import main.Main;
 import map.MapManager;
 import org.newdawn.slick.GameContainer;
 import org.newdawn.slick.Graphics;
@@ -25,7 +24,6 @@ public class Camera {
     
     public static void setScale(Graphics g) {
         g.scale(scale, scale);
-        //g.setAntiAlias(true);
     }
     
     public static void removeScale(Graphics g) {
