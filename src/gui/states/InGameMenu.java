@@ -37,6 +37,8 @@ public class InGameMenu extends BasicGameState implements Observer {
     private Image pause;
     
     private Button menu;
+    private Button reload;
+    private Button exit;
 
     public InGameMenu(Model model, ModelInGameMenu modelInGameMenu) {
         this.model = model;
@@ -65,6 +67,8 @@ public class InGameMenu extends BasicGameState implements Observer {
         g.drawImage(overlay, 0, 0);
         g.drawImage(pause, leftSidePauseCord, topSidePauseCord);
         menu.render(container, g);
+        exit.render(container, g);
+        reload.render(container, g);
     }
 
     @Override
@@ -81,6 +85,8 @@ public class InGameMenu extends BasicGameState implements Observer {
             overlay = modelInGameMenu.getOverlay();
             pause = modelInGameMenu.getPause();
             menu = modelInGameMenu.getMenu();
+            reload = modelInGameMenu.getReload();
+            exit = modelInGameMenu.getExit();
         }
     }
 

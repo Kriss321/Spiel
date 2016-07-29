@@ -13,16 +13,9 @@ import org.newdawn.slick.Graphics;
  * @author Kristof
  */
 public class EntityManager {
-    
-    public static Entity[] entitys;
-    private Entity e;
-    private Entity p;
-    
 
-    public EntityManager() {
-        
-    }
-    
+    public static Entity[] entitys;
+
     public static void loadEntitys(int playerCount) {
         
         entitys = new Entity[playerCount];

@@ -29,7 +29,7 @@ public interface Entity {
     
     public boolean collisionEntity(float x, float y);
     
-    public void delta(int delta);
+    public void reset();
     
     public float getPosX();
     

@@ -39,9 +39,6 @@ public class Player implements Entity {
     private long jumpTime;
     private int jumpCount;
     private Entity collidedEntity;
-    
-    private float delta = 0;
-    private int count = 0;
 
     public Player(Map map, int id) {
         this.map = map;
@@ -68,7 +65,6 @@ public class Player implements Entity {
     }
     
     public void move(int delta) {
-        //delta(delta);
         moveRight(delta);
         moveLeft(delta);
         slowDown(delta);
@@ -229,13 +225,9 @@ public class Player implements Entity {
         return false;
     }
     
-    public void delta(int delta){
-        if (this.count <= 300) {
-            this.delta += delta;
-            this.count++;
-            this.down_speed = this.gravity / (this.delta / this.count);
-            System.out.println(this.down_speed);
-        }
+    public void reset(){
+        this.posX = this.startPoint[0] * this.tileWidth;
+        this.posY = this.startPoint[1] * this.tileHeight;
     }
     
     public float getPosX() {

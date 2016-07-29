@@ -36,6 +36,22 @@ public class Button extends MyMouseOverArea {
                 switch(function) {
                     case "start":
                         BasedGame.modelMenu.start();
+                        container.getInput().consumeEvent();
+                }
+            } else if(BasedGame.state == BasedGame.ID_INGAMEMENU) {
+                switch(function) {
+                    case "back":
+                        BasedGame.modelInGameMenu.back();
+                        container.getInput().consumeEvent();
+                        break;
+                    case "reload":
+                        BasedGame.modelInGameMenu.reload();
+                        container.getInput().consumeEvent();
+                        break;
+                    case "exit":
+                        BasedGame.modelInGameMenu.exit();
+                        container.getInput().consumeEvent();
+                        break;
                 }
             }
         }

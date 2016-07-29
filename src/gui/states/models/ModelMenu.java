@@ -13,7 +13,6 @@ import input.TextFieldArea;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Observable;
-import java.util.concurrent.ThreadPoolExecutor;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import main.Resources;

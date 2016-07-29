@@ -154,9 +154,11 @@ public class TextFieldArea extends MyMouseOverArea {
                 switch (function) {
                     case "playerSelect":
                         BasedGame.modelMenu.playerSelected(Integer.parseInt(String.valueOf(text.charAt(0))) - 1);
+                        container.getInput().consumeEvent();
                         break;
                     case "mapSelect":
                         BasedGame.modelMenu.mapSelected(text);
+                        container.getInput().consumeEvent();
                         break;
                 }
             }
